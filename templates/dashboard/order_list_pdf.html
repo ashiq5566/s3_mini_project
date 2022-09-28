@@ -1,0 +1,30 @@
+<html>
+    <table class="table bg-white" border="1" cellspacing="2" cellpadding="2">
+        <thead class="bg-info text-white">
+          <tr>
+            <!-- <th scope="col">#</th> -->
+            <th scope="col">Product</th> 
+            <th scope="col">Category</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Order by</th>
+            <th scope="col">Order Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <!-- <th scope="row">{{order.id}}</th> -->
+            <td>{{ order.product }}</td>
+            <td>{{ order.product.category }}</td>
+            <td>{{ order.order_quantity }}</td>
+            <td> 
+                {{order.staff}}
+            </td>
+            <td>{{ order.date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+</html>
+            
+    

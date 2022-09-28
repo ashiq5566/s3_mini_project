@@ -1,0 +1,160 @@
+{% extends 'partial/base.html' %}
+{% block title %} VENDOR PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_wm.html'%}
+
+<div class="mx-5">
+    <div class="row my-4">
+
+      <!-- modal begin -->
+        <div>
+          <script>
+            $(document).ready(function() {
+              	$('#vAdd').modal('show');
+            });
+          </script>
+        </div>
+
+        <div class="modal fade" id="vAdd" tabindex="-1" role="dialog" aria-labelledby="vAddTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method="POST">
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                  <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">
+              </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col mt-4 text-right">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#vAdd">
+            Add
+          </button>
+      </div>
+
+        <!-- Modal end -->
+        <!-- view modal -->
+        <div>
+          <script>
+              $(document).ready(function() {
+              	$('#viewVe-{{ vendor.id}}').modal('show');
+            });
+          </script>
+        </div>
+        {% for vendor in vendors %}
+        <div class="modal fade" id="viewVe-{{ vendor.id}}" tabindex="-1" role="dialog" aria-labelledby="viewVe-{{ vendor.id}}Title" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Vendor Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <table>
+                  <tr>
+                    <th>Vendor_id</th>
+                    <td>{{ vendor.vendor_id }}</td>
+                  </tr>
+                  <tr>
+                    <th>Name</th>
+                    <td>{{ vendor.vendor_name }}</td>
+                  </tr>
+                  <tr>
+                    <th>Address</th>
+                    <td>{{ vendor.vendor_address }}</td>
+                  </tr>
+                  <tr>
+                    <th>Phone</th>
+                    <td>{{ vendor.vendor_mobile }}</td>
+                  </tr>
+                </table>
+                {% comment %} <tr>
+                  <td>{{ vendor.vendor_id }}</td>
+                  <td>{{ vendor.vendor_name }}</td>
+                  <td>{{ vendor.vendor_address }}</td>
+                  <td>{{ vendor.vendor_mobile }}</td>
+                </tr> {% endcomment %}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <!-- view modal end -->
+
+        <div class="col-md-12">
+            <!-- <table class="table bg-white">
+                <thead class="bg-info">
+                  <tr>
+                    <th scope="col">vendor_id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for vendor in vendors %}
+                  <tr>
+                    <td>{{ vendor.vendor_id }}</td>
+                    <td>{{ vendor.vendor_name }}</td>
+                    <td>{{ vendor.vendor_address }}</td>
+                    <td>{{ vendor.vendor_mobile }}</td>
+                    <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'dashboard-vendor-view' vendor.id %}">View</a></td>
+                    <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table> -->
+              <div class="tbl-header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <thead>
+                    <tr>
+                      <th scope="col">vendor_id</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">Contact</th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tbl-content">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <tbody>
+                    {% for vendor in vendors %}
+                      <tr>
+                        <td>{{ vendor.vendor_id }}</td>
+                        <td>{{ vendor.vendor_name }}</td>
+                        <td>{{ vendor.vendor_address }}</td>
+                        <td>{{ vendor.vendor_mobile }}</td>
+                        <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewVe-{{ vendor.id}}">View</a></td>
+                        <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

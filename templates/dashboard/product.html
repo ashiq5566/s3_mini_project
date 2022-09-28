@@ -1,0 +1,74 @@
+{% extends 'partial/base.html' %}
+{% block title %} PRODUCT PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_wm.html' %}
+
+<!-- tables -->
+<!-- <div class="container">
+    <div class="row my-4">
+        <div class="col-md-4">
+          {% for message in messages %}
+          {% if message %}
+          <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+          </div>
+          {% endif %}
+          {% endfor %}
+            <div class="border bg-white p-3">
+                <h4>Add Products</h4>
+                <hr>
+                <form method="POST">
+                    {% csrf_token %}
+                     {{ form|crispy }}
+                    <input class="btn btn-success btn-block" type="submit" value="Add Products">
+                </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="text-left">
+              <form class="form-inline my-2">
+                <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              </form>
+            </div>
+            <table class="table bg-white">
+                <thead class="bg-info text-white">
+                  <tr>
+                    <th scope="col">Name</th> 
+                    <th scope="col">Category</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price/Unit</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Activity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in items %}
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }}</td>
+                    <td>{{ item.total_price }}</td>
+                    <td> 
+                        <a class="btn btn-info btn-sm" href="{% url 'dashboard-product-edit' item.id %}">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="{% url 'dashboard-product-delete' item.id %}">Delete</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="text-right">
+                <a class="btn btn-info text-right" href="{% url 'report_pdf' %}">Product List<span class="sr-only">(current)</span></a>
+              </div>  
+        </div>
+    </div>
+</div> -->
+
+
+
+<!--end tables -->
+
+{% endblock %}

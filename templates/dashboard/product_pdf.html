@@ -1,0 +1,20 @@
+<html>
+    <table border="1" cellspacing="2" cellpadding="2">
+          <tr>
+            <th>Name</th> 
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Pricr/Unit</th>
+            <th>Total</th>
+          </tr>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unit_price }}</td>
+            <td>{{ item.total_price }}</td>
+          </tr>
+          {% endfor %}
+      </table>
+</html>

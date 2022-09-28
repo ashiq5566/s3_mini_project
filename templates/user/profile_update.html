@@ -1,0 +1,37 @@
+{% extends 'partial/base.html' %}
+{% block title %} LOGIN PAGE {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<!-- tables -->
+<div class="container">
+    <div class="row my-4">
+        <div class="col-md-4">
+            
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Profile
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <span class="h4"> Staff Profile Information</span>
+                           <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ user_form|crispy }}
+                                {{ profile_form|crispy }}
+                                <input type="submit" value="Update" class="btn btn-info">
+                           </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<!--end tables -->
+
+{% endblock %}

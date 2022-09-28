@@ -1,0 +1,29 @@
+{% extends 'partial/base.html' %}
+{% block title %} VENDOR PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="border bg-white p-3">
+                <h3>Delete Vendor</h3>
+                <hr>
+                <div>
+                    <div class="alert alert-danger">
+                        <h4>Are you sure you want to delete {{ vendors.vendor_name }} </h4>
+
+                    </div>
+                    <form method="POST" action>
+                        {% csrf_token %}
+                        <!-- {{form|crispy}} -->
+                        <a class="btn btn-primary btn-primary " href="{% url 'dashboard-customer' %}">cancel</a>
+                        <input type="submit" value="confirm" class="btn btn-danger" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

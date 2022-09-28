@@ -1,0 +1,66 @@
+{% extends 'partial/base.html' %}
+{% block title %} STAFF PAGE {% endblock %}
+
+{% block content %}
+{% include 'partial/topnav_wm.html'%}
+
+<!-- tables -->
+<div class="mx-5">
+  <div class="row my-4">
+        <div class="col-md-12">
+            <!-- <table class="table bg-white">
+                <thead class="bg-info">
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col"></th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for work in workers %}
+                  <tr>
+                    <td>{{ work.username }}</td>
+                    <td>{{ work.email }}</td>
+                    <td>{{ work.profile.phone }}</td>
+                    <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'dashboard-staff-detail' work.id %}">View</a></td>
+                    <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-staff-delete' work.id %}">Delete</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table> -->
+              <div class="tbl-header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col"></th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tbl-content">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <tbody>
+                    {% for work in workers %}
+                      <tr>
+                        <td>{{ work.username }}</td>
+                        <td>{{ work.email }}</td>
+                        <td>{{ work.profile.phone }}</td>
+                        <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'dashboard-staff-detail' work.id%}">View</a></td>
+                        <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-staff-delete' work.id %}">Delete</a></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+        </div>
+    </div>
+</div>
+
+<!--end tables -->
+{% endblock %}

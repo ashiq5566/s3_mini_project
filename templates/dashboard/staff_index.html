@@ -1,0 +1,69 @@
+{% load crispy_forms_tags %}
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="container">
+        <!-- <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card">
+                    {% for message in messages %}
+                    {% if message %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    {% endfor %}
+                    <div class="card-header">
+                        Make Order
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <input type="submit" class="btn btn-info btn-block" value="Make Order" />
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        Order Records
+                    </div>
+                    <div class="card-body">
+                        <table class="table bg-white">
+                            <thead class="bg-info text-white">
+                              <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Quantity </th>
+                                <th scope="col">Price/unit </th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Date </th>
+                                <th scope="col">Action </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for order in orders %}
+                              {% if order.staff == user %}
+                              <tr>
+                                <td>{{ order.product.name }}</td>
+                                <td>{{ order.product.category }}</td>
+                                <td>{{ order.order_quantity }}</td>
+                                <td>{{ order.product.unit_price }}</td>
+                                <td>{{ order.total_order_price }}</td>
+                                <td>{{ order.date }}</td>
+                                <td>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'dashboard-staff-order-delete' order.id %}">Delete</a>
+                                  </td>
+                              </tr>
+                              {% endif %}
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+                </div>
+            </div> -->
+        <!-- </div> -->
+
+</div>
+{% endblock %}  

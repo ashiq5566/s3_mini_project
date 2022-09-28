@@ -1,0 +1,55 @@
+	<!-- Topside -->
+
+	<div class="mx-5">
+		<div class="row mt-4">
+			<!-- <div class="col-md-4">
+				<div class="card">
+					<div class="card-header bg-info text-white">
+						information
+					</div>
+					<div class="card-body">
+						<marquee behavior="" direction="">
+							<h3 class="my-3">This is the information for you</h3>
+						</marquee>
+					</div>
+				</div> -->
+			</div>
+			<div class="col-md-">
+				<div class="card">
+					<!-- <div class="card-header bg-info text-white">
+						
+					</div> -->
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-4">
+								<a class="text-decoration-none text-dark" href="{% url 'dashboard-staff' %}">
+									<div class="card my-card shadow text-center p-3">
+										<h4>Staff <i class="fa fa-user"></i></h4>
+										<h3>{{ workers_count }}</h3>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-4">
+								<a class="text-decoration-none text-dark" href="{% url 'dashboard-customer' %}">
+									<div class="card my-card shadow text-center p-3">
+										<h4>CUSTOMERS <i class="fa fa-user"></i></h4>
+										<h3>{{ customer_count }}</h3>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-4">
+								<a class="text-decoration-none text-dark" href="{% url 'dashboard-vendor' %}">
+									<div class="card my-card shadow text-center p-3">
+										<h4>VENDORS <i class="fa fa-user"></i></h4>
+										<h3>{{ vendor_count }}</h3>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- topside -->
