@@ -15,9 +15,9 @@
                         <h4>Are you sure you want to delete {{ customers.customer_name }} </h4>
 
                     </div>
-                    <form method="POST" action>
+                    <form method="POST">
                         {% csrf_token %}
-                        <!-- {{form|crispy}} -->
+                        {% comment %} {{form|crispy}} {% endcomment %}
                         <a class="btn btn-primary btn-primary " href="{% url 'dashboard-customer' %}">cancel</a>
                         <input type="submit" value="confirm" class="btn btn-danger" />
                     </form>

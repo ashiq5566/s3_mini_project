@@ -7,12 +7,12 @@
         <div>
             <script>
               $(document).ready(function() {
-                    $('#cAdd').modal('show');
+                    $('#viewP-{{ user.id}}').modal('show');
               });
             </script>
           </div>
   
-          <div class="modal fade" id="cAdd" tabindex="-1" role="dialog" aria-labelledby="cAddTitle" aria-hidden="true" class="modal hide fade in" data-keyboard="false" data-backdrop="static">
+          <div class="modal fade" id="viewP-{{ user.id}}" tabindex="-1" role="dialog" aria-labelledby="cAddTitle" aria-hidden="true" class="modal hide fade in" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -69,7 +69,7 @@
 
 			<ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                <a class="nav-link text-white" data-toggle="modal" data-target="#cAdd"> {{ user.username }} Profile <span class="sr-only">(current)</span></a>
+                <a class="nav-link text-white" data-toggle="modal" data-target="#viewP-{{ user.id}}"> {{ user.username }} Profile <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                 <a class="nav-link text-white" href="{% url 'user-logout' %}">Logout</a>
