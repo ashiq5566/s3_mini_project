@@ -13,10 +13,10 @@ urlpatterns = [
     path('vendor/view/<int:pk>',views.vendor_view,name='dashboard-vendor-view'),
     path('vendor/delete/<int:pk>',views.vendor_delete,name='dashboard-vendor-delete'),
     path('stock/',views.stock,name='stock'),
+    path('purchase/',views.purchase,name='purchase'),
+    path('purchase/add/',views.purchase_add,name='purchase_add'),
+    # path('purchase/add/cart/',views.addtocart,name='add-to-cart'),
+
     path('demo/',views.demo,name='demo'),
-    # path('product/',views.product,name='dashboard-product'),
-    # path('product/delete/<int:pk>',views.product_delete,name='dashboard-product-delete'),
-    # path('product/edit/<int:pk>',views.product_edit,name='dashboard-product-edit'),
-    # path('report_pdf/',views.report_pdf,name='report_pdf'),
 ]
 

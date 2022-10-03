@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, Vendor, Item, MyUUIDModel
+from .models import Customer, Vendor, Item, MyUUIDModel,PurchasedItems
 
 admin.site.site_header = "Inventory Management System"
 
@@ -11,6 +11,9 @@ class VendorAdmin(admin.ModelAdmin):
     
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('item_id','name','unit_price','qty_available','qty_sold','status')
+
+class PurchasedItemsAdmin(admin.ModelAdmin):
+    list_display = ('po_number','vendor_id','item_id','item_name','quantity','unit_price','total')
 
 class MyUUIDModelAdmin(admin.ModelAdmin):
     list_display = ('regnumber1','username')
@@ -24,5 +27,7 @@ class MyUUIDModelAdmin(admin.ModelAdmin):
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(PurchasedItems, PurchasedItemsAdmin)
 admin.site.register(MyUUIDModel, MyUUIDModelAdmin)
+
 

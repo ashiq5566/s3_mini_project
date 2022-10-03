@@ -29,9 +29,8 @@
               <div class="modal-body">
                 <form method="POST">
                   {% csrf_token %}
-                  {% comment %} {{ form|crispy }} {% endcomment %}
-                  <div class="form-group">
-                    {% comment %} <label>item_id</label> {% endcomment %}
+                  {{ form|crispy }}
+                  {% comment %} <div class="form-group">
                     <input type="hidden" name="cu_id" class="form-control" readonly />
                   </div>
                   <div class="form-group">
@@ -45,7 +44,7 @@
                   <div class="form-group">
                     <label>Customer Mobile</label>
                     <input type="text" name="c_mob" class="form-control" placeholder="Enter mobile" />
-                  </div>
+                  </div> {% endcomment %}
                   <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">
                 </form>
               </div>

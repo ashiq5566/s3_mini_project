@@ -13,11 +13,13 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <!-- chartjs -->
-	  <script src="{% static 'chart.min.js' %}"></script>
+   
     <!-- css -->
 	  <link rel="stylesheet" href="{% static 'style.css' %}" />
     <link rel="stylesheet" href="{% static 'tblstyle.css' %}" />
+     <!-- chartjs -->
+	  {% comment %} <script src="{% static 'jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'custom.js' %}"></script> {% endcomment %}
     
     <title>{% block title %}{% endblock %}</title>
   </head>

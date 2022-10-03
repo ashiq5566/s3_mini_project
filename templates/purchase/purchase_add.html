@@ -1,0 +1,96 @@
+{% extends 'partial/base.html' %}
+{% block title %} PURCHASE PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+
+<div class="mx-5">
+    {% comment %} <script>
+        function add(){
+            var new_chq_no = parseInt($('#total_chq').val())+1;
+            var new_chq_no1 = parseInt($('#total_chq1').val())+1;
+            var new_input="<input type='text' placeholder='name' id='new_"+new_chq_no+"'>";
+            var new_input1="<input type='password' placeholder='psw' id='new_"+new_chq_no1+"'>";
+            $('#new_chq').append(new_input);
+            $('#new_chq1').append(new_input1);
+            $('#total_chq1').val(new_chq_no1)
+            $('#total_chq').val(new_chq_no)
+          }
+          function remove(){
+            var last_chq_no = $('#total_chq').val();
+            var last_chq_no1 = $('#total_chq1').val();
+            if(last_chq_no>1){
+              $('#new_'+last_chq_no).remove();
+              $('#total_chq').val(last_chq_no-1);
+            }
+            if(last_chq_no1>1){
+                $('#new_'+last_chq_no1).remove();
+                $('#total_chq1').val(last_chq_no1 - 1);
+              }
+          }
+    </script> {% endcomment %}
+    {% comment %} <form method="post">
+        {% csrf_token %}
+        <div class="form-group text-right">
+            <label>vendor</label>
+            <select name= "vendors" class="form-select">
+                {% for vendor in vendors  %}
+                <option>{{vendor.vendor_id}}-{{vendor.vendor_name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <input type="text" name="name" placeholder="name">
+            <input type="password" name="pswd" placeholder="psw">
+            <input type="hidden" value="1" id="total_chq">
+            <input type="hidden" value="1" id="total_chq1">
+        </div>
+        <div id="new_chq"></div><br />
+        <div id="new_chq1"></div>
+    </form>
+        <button onclick="add()">Add</button>
+        <button onclick="remove()">remove</button> {% endcomment %}
+
+        
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group text-right">
+            <label>vendor</label>
+            <select name= "vend" class="form-select">
+                {% for vendor in vendors  %}
+                <option>{{vendor.vendor_id}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Add Items</h5>
+                {% comment %} {% for item in items %}     {% endcomment %}
+                <div class="form-group">
+                    <label>ID</label><br />
+                    <select name="i_id" class="form-select">
+                        {% for item in items  %}
+                        <option>{{item.item_id}}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Qty</label><br />
+                    <input type="text" name="quantity" />
+                    <label>Unit Price</label><br />
+                    <input type="text" name="u_price" />
+                    
+                </div>
+                {% comment %} {% endfor %} {% endcomment %}
+            </div>
+        </div>
+        <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+    </form>
+</div>
+<script>
+
+
+</script>
+
+
+{% endblock %}

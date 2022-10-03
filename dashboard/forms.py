@@ -1,22 +1,86 @@
 from pyexpat import model
+from tkinter.ttk import Widget
 from django import forms
-from .models import Customer, Vendor, Item
+from .models import Customer, PurchaseOrder, Vendor, Item
 
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['customer_id', 'customer_name', 'customer_address', 'customer_mobile']
+        fields = ['customer_name', 'customer_address', 'customer_mobile']
+        
+        widgets = {
+            "customer_name": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Entre name",
+                    "label": "Name",
+                }
+            ),
+            "customer_address": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Enter Address",
+                    "label": "Address",
+                }
+            ),
+            "customer_mobile": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Enter Mobile",
+                    "label": "Mobile",
+                }
+            ),
+        }
 
 class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendor
-        fields = ['vendor_id', 'vendor_name', 'vendor_address', 'vendor_mobile']
+        fields = ['vendor_name', 'vendor_address', 'vendor_mobile']
+        
+        widgets = {
+            "vendor_name": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Entre name",
+                    "label": "Name",
+                }
+            ),
+            "vendor_address": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Enter Address",
+                    "label": "Address",
+                }
+            ),
+            "vendor_mobile": forms.TextInput(
+                attrs={
+                    "required": True,
+                    "placeholder": "Enter Mobile",
+                    "label": "Mobile",
+                }
+            ),
+        }
         
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['item_id', 'name', 'unit_price']
-# class OrderForm(forms.ModelForm):
-#     class Meta:
-#         model = Order
-#         fields = ['product','order_quantity']
+        fields = ['name', 'unit_price']
+        
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    # "name": "pname",
+                    "required": True,
+                    "placeholder": "Entre name1",
+                    "label": "Name",
+                }
+            ),
+            "unit_price": forms.TextInput(
+                attrs={
+                    # "name": "uprice",
+                    "required": True,
+                    "placeholder": "Entre price1",
+                    "label": "Price",
+                }
+            ),
+        }

@@ -1,0 +1,14 @@
+{% extends 'partial/base.html' %}
+{% block title %} PURCHASE PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+
+<div class="mx-5">
+    <div class="col mt-4 text-right">
+        <a class="btn btn-danger btn-sm" href="{% url 'purchase_add' %}">Add <i class="fa fa-plus"></i></a
+    </div>
+</div
+
+{% endblock %}

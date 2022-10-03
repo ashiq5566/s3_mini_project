@@ -2,9 +2,9 @@ from multiprocessing import context
 import re
 from unicodedata import name
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Customer, Vendor, Item,MyUUIDModel
+from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems
 from django.contrib.auth.models import User
 from .forms import CustomerForm, VendorForm, ItemForm
 from django.contrib import messages
@@ -79,26 +79,25 @@ def customer(request):
     workers_count = workers.count()
     vendors = Vendor.objects.all()
     vendor_count = vendors.count()
-    c_id = 1 if Customer.objects.count() == 0 else Customer.objects.aggregate(max=Max('customer_no'))["max"] + 1
+    c_id = 101 if Customer.objects.count() == 0 else Customer.objects.aggregate(max=Max('customer_no'))["max"] + 1
     if request.method == 'POST':
-        cu_id = request.POST.get('cu_id')
-        name = request.POST.get('c_name')
-        address = request.POST.get('c_address')
-        mob = request.POST.get('c_mob')
-        Customer(customer_no=c_id,customer_id=(f'{"C00"}{c_id}'),customer_name=name,customer_address=address,customer_mobile=mob).save()
-    # if request.method == 'POST':
-        # form = CustomerForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
+        # cu_id = request.POST.get('cu_id')
+        name = request.POST.get('customer_name')
+        address = request.POST.get('customer_address')
+        mob = request.POST.get('customer_mobile')
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            Customer(customer_no=c_id,customer_id=(f'{"C"}{c_id}'),customer_name=name,customer_address=address,customer_mobile=mob).save()
             # redirect('dashboard/customer')
-    # else:
-    #     form = CustomerForm()
+    else:
+        form = CustomerForm()
     context = {
         'customers': customers,
         'workers' : workers,
         'workers_count' : workers_count,
         'customer_count' : customer_count,
         'vendor_count' : vendor_count,
+        'form' : form,
     }
     return render(request, 'dashboard/customers.html', context)
 
@@ -132,24 +131,22 @@ def vendor(request):
     workers = User.objects.exclude(username='admin')
     workers_count = workers.count()
     customer_count = Customer.objects.all().count()
-    v_id = 1 if Vendor.objects.count() == 0 else Vendor.objects.aggregate(max=Max('vendor_no'))["max"] + 1
+    v_id = 101 if Vendor.objects.count() == 0 else Vendor.objects.aggregate(max=Max('vendor_no'))["max"] + 1
     if request.method == 'POST':
-        ve_id = request.POST.get('ve_id')
-        name = request.POST.get('v_name')
-        address = request.POST.get('v_address')
-        mob = request.POST.get('v_mob')
-        Vendor(vendor_no=v_id,vendor_id=(f'{"V00"}{v_id}'),vendor_name=name,vendor_address=address,vendor_mobile=mob).save()
-    # if request.method == 'POST':
-    #     form = VendorForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
+        # ve_id = request.POST.get('ve_id')
+        name = request.POST.get('vendor_name')
+        address = request.POST.get('vendor_address')
+        mob = request.POST.get('vendor_mobile')
+        form = VendorForm(request.POST)
+        if form.is_valid():
+            Vendor(vendor_no=v_id,vendor_id=(f'{"V"}{v_id}'),vendor_name=name,vendor_address=address,vendor_mobile=mob).save()
             # redirect('dashboard/vendor')
 
 
-    # else:
-    #     form = VendorForm()
+    else:
+        form = VendorForm()
     context = {
-        # 'form' : form,  
+        'form' : form,  
         'vendors': vendors,
         'vendor_count' : vendor_count,
         'workers_count': workers_count,
@@ -179,22 +176,63 @@ def vendor_delete(request, pk):
 @login_required
 def stock(request):
     items = Item.objects.all()
-    p_id = 1 if Item.objects.count() == 0 else Item.objects.aggregate(max=Max('item_no'))["max"] + 1
+    p_id = 101 if Item.objects.count() == 0 else Item.objects.aggregate(max=Max('item_no'))["max"] + 1
     if request.method == 'POST':
-        i_id = request.POST.get('i_id')
-        price = request.POST.get('uprice')
-        name = request.POST.get('pname')
-        Item(item_no=p_id,item_id=(f'{"P00"}{p_id}'),name=name,unit_price=price).save()
-        # form = ItemForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
-    # else:
-    #     form = ItemForm
+    #     i_id = request.POST.get('i_id')
+        price = request.POST.get('unit_price')
+        name = request.POST.get('name')
+        form = ItemForm(request.POST)
+        if form.is_valid():
+            Item(item_no=p_id,item_id=(f'{"P"}{p_id}'),name=name,unit_price=price).save()
+            # form.save()
+    else:
+        form = ItemForm
     context = {
         'items': items,
-        # 'form' : form,
+        'form' : form,
     }
     return render(request, 'dashboard/stock.html',context)
+
+@login_required
+def purchase(request):
+    return render(request, 'purchase/purchase_orders.html')
+
+@login_required
+def purchase_add(request):
+    vendors = Vendor.objects.all()
+    items = Item.objects.all()
+    if request.method == "POST":
+        vendor = request.POST.get('vend')
+        i_id = request.POST.get('i_id')
+        qty = request.POST.get('quantity')
+        u_price = request.POST.get('u_price')
+        # s = items.filter(name=i_name).values('item_id')
+        # s = items.only('item_id').get(name=i_name).item_id
+        s = items.values('name').filter(item_id=i_id)[0]['name']
+        PurchasedItems.objects.create(item_id=items.get(item_id=i_id),item_name=s,vendor_id=vendors.get(vendor_id=vendor),quantity=qty,unit_price=u_price)
+        return redirect('purchase_add')
+
+    context = { 
+        'vendors': vendors,
+        'items' : items,
+    } 
+    return render(request, 'purchase/purchase_add.html',context)
+
+# @login_required
+# def addtocart(request):
+#     if request.method == 'POST':
+#         prod_id =  request.POST.get('product_id')
+#         qty_input = request.POST.get('product_qty')
+#         product_check = Item.objects.get(item_id=prod_id)
+#         if (product_check):
+#             PurchasedItems.objects.create(item_id=prod_id,quantity=qty_input)
+#             return JsonResponse({'status':"added"})
+#         else:
+#             return JsonResponse({'status':"no such pro"})
+#     return redirect('purchase_add')
+        
+        
+
 @login_required
 def demo(request):
     regno = 1 if MyUUIDModel.objects.count() == 0 else MyUUIDModel.objects.aggregate(max=Max('regnumber'))["max"] + 1
