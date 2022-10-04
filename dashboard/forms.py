@@ -1,7 +1,7 @@
 from pyexpat import model
 from tkinter.ttk import Widget
 from django import forms
-from .models import Customer, PurchaseOrder, Vendor, Item
+from .models import Customer, PurchaseOrder, Vendor, Item, PurchasedItems
 
 class CustomerForm(forms.ModelForm):
     class Meta:
@@ -69,7 +69,6 @@ class ItemForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(
                 attrs={
-                    # "name": "pname",
                     "required": True,
                     "placeholder": "Entre name1",
                     "label": "Name",
@@ -77,10 +76,58 @@ class ItemForm(forms.ModelForm):
             ),
             "unit_price": forms.TextInput(
                 attrs={
-                    # "name": "uprice",
                     "required": True,
                     "placeholder": "Entre price1",
                     "label": "Price",
                 }
             ),
         }
+
+class PurchasedItemForm(forms.ModelForm):
+    # vendor_id = forms.ModelChoiceField(queryset=Vendor.objects.all(), initial=0,label = 'Vendor_ID',widget=forms.Select(attrs={}))
+    # item_id = forms.ModelChoiceField(queryset=Item.objects.all(), initial=0,label = 'ITEM_ID',widget=forms.Select(attrs={}))
+    # quantity = forms.IntegerField(label = 'ITEM_QTY',widget=forms.TextInput(attrs={}))
+    # unit_price = forms.IntegerField(label = 'UNIT_PRICE',widget=forms.TextInput(attrs={}))
+    class Meta:
+        model = PurchasedItems
+        fields = ['vendor_id','item_id', 'quantity','unit_price']
+        
+        ch = list(Item.objects.all().values('item_id'))
+        ch1 = list(Vendor.objects.all().values('vendor_id'))
+        widgets = {
+            "item_id": forms.Select(
+                choices=ch,
+                attrs={
+                    "required": True,
+                }
+            
+            ),
+            "vendor_id": forms.Select(
+                choices=ch1,
+                attrs={
+                    "required": True,
+                }
+            
+            ),
+            
+        }
+        
+# class PurchaseUpdateForm(forms.ModelForm):
+
+#     class Meta:
+#         model = PurchasedItems
+#         fields = ['item_id', 'quantity','unit_price']
+        
+#         ch = list(Item.objects.all().values('item_id'))
+#         widgets = {
+#             "item_id": forms.Select(
+#                 choices=ch,
+#                 attrs={
+#                     "required": True,
+#                     "placeholder": "Entre name1",
+#                     "label": "Name",
+#                 }
+            
+#             ),
+            
+#         }

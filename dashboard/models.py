@@ -46,15 +46,12 @@ class Vendor(models.Model):
             return self.vendor_id
 
 class PurchaseOrder(models.Model):
-    date = models.DateField(null=False)
-    po_number = models.IntegerField(null=False)
+    date = models.DateField(null=True)
+    po_number = models.IntegerField(null=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
     gross_amount = models.IntegerField(null=True)
     discount = models.IntegerField(null=True)
     net_amount = models.IntegerField(null=True)
-    
-    def net_amount(self):
-        return self.gross_amount - self.discount
     
 class PurchasedItems(models.Model):
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
@@ -63,13 +60,12 @@ class PurchasedItems(models.Model):
     item_name = models.CharField(max_length=100, null=True)
     quantity = models.PositiveIntegerField(null=True, default=0)
     unit_price = models.IntegerField(null=True, default=0)
-    total = models.IntegerField(null=True)
-        
-    def total(self):
+    total_amt = models.IntegerField(null=True)
+     
+    def total_amt(self):
         return self.quantity * self.unit_price
     
-    # def item_name(self):
-    #     if(self.item_id == Item.item_id):
-    #         return Item.name
-    #     return Item.name
+    @property
+    def item_name(self):
+        return self.item_id.name
        

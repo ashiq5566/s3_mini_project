@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, Vendor, Item, MyUUIDModel,PurchasedItems
+from .models import Customer, Vendor, Item, MyUUIDModel,PurchasedItems, PurchaseOrder
 
 admin.site.site_header = "Inventory Management System"
 
@@ -12,8 +12,17 @@ class VendorAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('item_id','name','unit_price','qty_available','qty_sold','status')
 
+class PurchaseOrderAdmin(admin.ModelAdmin):
+    list_display = ('date','po_number','vendor_id','gross_amount','discount','net_amount')
+    
+    # def NET(self):
+    #     return self.gross_amount - self.discount
+
+    # net_amount = property(NET)
+    
+
 class PurchasedItemsAdmin(admin.ModelAdmin):
-    list_display = ('po_number','vendor_id','item_id','item_name','quantity','unit_price','total')
+    list_display = ('id','po_number','vendor_id','item_id','item_name','quantity','unit_price','total_amt')
 
 class MyUUIDModelAdmin(admin.ModelAdmin):
     list_display = ('regnumber1','username')
@@ -27,6 +36,7 @@ class MyUUIDModelAdmin(admin.ModelAdmin):
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchasedItems, PurchasedItemsAdmin)
 admin.site.register(MyUUIDModel, MyUUIDModelAdmin)
 

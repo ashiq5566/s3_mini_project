@@ -4,11 +4,11 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems
+from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder
 from django.contrib.auth.models import User
-from .forms import CustomerForm, VendorForm, ItemForm
+from .forms import CustomerForm, VendorForm, ItemForm,PurchasedItemForm
 from django.contrib import messages
-from django.db.models import Q, Max
+from django.db.models import Q, Max, F
 
 # reort generation report lab
 from django.http import FileResponse
@@ -201,22 +201,66 @@ def purchase(request):
 def purchase_add(request):
     vendors = Vendor.objects.all()
     items = Item.objects.all()
+    purchased_items = PurchasedItems.objects.all()
+    # field_name = 'total_amount'
+    # total1 = PurchasedItems._meta.get_field(field_name)
+    # g_amount = 0 if total1 == 0 else PurchasedItems.objects.aggregate(max=Max('total_amount'))["max"] + 10
+    # t_amount = PurchasedItems.quantity * PurchasedItems.unit_price
+    # purchased_items = PurchasedItems.objects.annotate(t_amount = F('quantity') - F('unit_price'))
+    # total_spent =  PurchasedItems.objects.filter(id=id).annotate(total_spent=(F('quantity') * F('unit_price')))
     if request.method == "POST":
-        vendor = request.POST.get('vend')
-        i_id = request.POST.get('i_id')
-        qty = request.POST.get('quantity')
-        u_price = request.POST.get('u_price')
+        # vendor = request.POST.get('vendor_id')
+        # i_id = request.POST.get('item_id')
+        # qty = request.POST.get('quantity')
+        # u_price = request.POST.get('unit_price')
         # s = items.filter(name=i_name).values('item_id')
         # s = items.only('item_id').get(name=i_name).item_id
-        s = items.values('name').filter(item_id=i_id)[0]['name']
-        PurchasedItems.objects.create(item_id=items.get(item_id=i_id),item_name=s,vendor_id=vendors.get(vendor_id=vendor),quantity=qty,unit_price=u_price)
-        return redirect('purchase_add')
+        # s = items.values('name').filter(item_id=i_id)[0]['name']
+        # PurchasedItems.objects.create(item_id=items.get(item_id=i_id),item_name=s,vendor_id=vendors.get(vendor_id=vendor),quantity=qty,unit_price=u_price)
+        # return redirect('purchase_add')
+        # PurchaseOrder(gross_amount=g_amount).save()
+        # PurchasedItems(total_amount=total_spent).save()
+        form = PurchasedItemForm(request.POST)
+        if form.is_valid():
+            # PurchasedItems(item_id=Item.objects.get(item_id=i_id),vendor_id=Vendor.get(vendor_id=vendor),quantity=qty,unit_price=u_price).save()
+            form.save()
+            return redirect('purchase_add')
+        
+    else:
+        form = PurchasedItemForm
 
     context = { 
         'vendors': vendors,
         'items' : items,
+        'purchased_items' : purchased_items,
+        'form' : form,
     } 
     return render(request, 'purchase/purchase_add.html',context)
+
+@login_required
+def purchaseditem_update(request, id):
+    purchased_items = PurchasedItems.objects.get(pk=id)
+    form = PurchasedItemForm(request.POST or None, instance = purchased_items)
+    if form.is_valid():
+        form.save()
+        return redirect('purchase_add')
+    
+    context = {
+        'purchased_items' : purchased_items,
+        'form' : form,
+    }
+    return render(request, 'purchase/purchaseditem_update.html',context)
+
+@login_required
+def purchaseditem_delete(request, pk):
+    purchased_items = PurchasedItems.objects.get(id=pk)
+    if request.method == 'POST':
+        purchased_items.delete()
+        return redirect('purchase_add')
+    context = {
+        'purchased_items' : purchased_items,
+    }
+    return render(request, 'purchase/purchaseditem_delete.html',context)
 
 # @login_required
 # def addtocart(request):

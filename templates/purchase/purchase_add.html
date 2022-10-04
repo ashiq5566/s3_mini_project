@@ -6,6 +6,49 @@
 {% include 'partial/topnav_staff.html'%}
 
 <div class="mx-5">
+	<div class="row my-4">
+        <div class="col-md-4">
+			<form method="post">
+				{% csrf_token %}
+				{{form|crispy}}
+				<input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+			</form>
+		</div>
+		<div class="col-md-8">
+			<div class="tbl-header">
+				<table cellpadding="0" cellspacing="0" border="0">
+				  <thead>
+					<tr>
+					  <th scope="col">ItemID</th>
+					  <th scope="col">Name</th>
+					  <th scope="col">Qty</th>
+					  <th scope="col">Unit_Price</th>
+					  <th scope="col">Total</th>
+					  <th scope="col"></th>
+					  <th scope="col"></th>
+					</tr>
+				  </thead>
+				</table>
+			  </div>
+			  <div class="tbl-content">
+				<table cellpadding="0" cellspacing="0" border="0">
+				  <tbody>
+					{% for purchased_item in purchased_items %}
+					<tr>
+					  <td>{{ purchased_item.item_id }}</td>
+					  <td>{{ purchased_item.item_name }}</td>
+					  <td>{{ purchased_item.quantity }}</td>
+					  <td>{{ purchased_item.unit_price }}</td>
+					  <td>{{ purchased_item.total_amt }}</td>
+					  <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchased_item.id %}">Edit</a></td>
+					  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchased_item.id %}">Delete</a></td>
+					</tr>
+					{% endfor %}
+				  </tbody>
+				</table>
+			  </div>
+		</div>
+	</div>
     {% comment %} <script>
         function add(){
             var new_chq_no = parseInt($('#total_chq').val())+1;
@@ -52,11 +95,8 @@
         <button onclick="add()">Add</button>
         <button onclick="remove()">remove</button> {% endcomment %}
 
-        
-    
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group text-right">
+
+        {% comment %} <div class="form-group text-right">
             <label>vendor</label>
             <select name= "vend" class="form-select">
                 {% for vendor in vendors  %}
@@ -66,9 +106,9 @@
         </div>
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Add Items</h5>
+                <h5 class="card-title">Add Items</h5> {% endcomment %}
                 {% comment %} {% for item in items %}     {% endcomment %}
-                <div class="form-group">
+                {% comment %} <div class="form-group">
                     <label>ID</label><br />
                     <select name="i_id" class="form-select">
                         {% for item in items  %}
@@ -80,12 +120,10 @@
                     <label>Unit Price</label><br />
                     <input type="text" name="u_price" />
                     
-                </div>
+                </div> {% endcomment %}
                 {% comment %} {% endfor %} {% endcomment %}
-            </div>
-        </div>
-        <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
-    </form>
+            {% comment %} </div>
+        </div> {% endcomment %}
 </div>
 <script>
 
