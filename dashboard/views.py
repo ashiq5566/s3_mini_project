@@ -207,7 +207,7 @@ def purchase(request):
         if form.is_valid():
             # form.save()
             PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_id=ven1).save()
-            return redirect("purchase_add")
+            return redirect("purchase")
     else:
         form = PurchaseOrderForm
     context = {
@@ -217,9 +217,10 @@ def purchase(request):
     return render(request, 'purchase/purchase_orders.html',context)
 
 @login_required
-def purchase_add(request):
+def purchase_add(request, pk):
     vendors = Vendor.objects.all()
     items = Item.objects.all()
+    purchase_orders = PurchaseOrder.objects.get(id=pk)
     purchased_items = PurchasedItems.objects.all()
     # field_name = 'total_amount'
     # total1 = PurchasedItems._meta.get_field(field_name)
@@ -253,6 +254,7 @@ def purchase_add(request):
         'items' : items,
         'purchased_items' : purchased_items,
         'form' : form,
+        'purchase_orders':purchase_orders,
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
