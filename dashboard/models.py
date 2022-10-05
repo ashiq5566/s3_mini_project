@@ -47,11 +47,12 @@ class Vendor(models.Model):
 
 class PurchaseOrder(models.Model):
     date = models.DateField(null=True)
-    po_number = models.IntegerField(null=True)
+    po_no = models.IntegerField(null=True)
+    po_number = models.CharField(max_length=100, null=True, unique=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
     gross_amount = models.IntegerField(null=True)
     discount = models.IntegerField(null=True)
-    net_amount = models.IntegerField(null=True)
+    net_amount = models.IntegerField(null=True) 
     
 class PurchasedItems(models.Model):
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)

@@ -1,7 +1,10 @@
 from pyexpat import model
 from tkinter.ttk import Widget
 from django import forms
-from .models import Customer, PurchaseOrder, Vendor, Item, PurchasedItems
+from django.forms import HiddenInput
+from .models import Customer, PurchaseOrder, Vendor, Item, PurchasedItems,PurchaseOrder
+from django.db.models import Q, Max, F
+
 
 class CustomerForm(forms.ModelForm):
     class Meta:
@@ -111,23 +114,34 @@ class PurchasedItemForm(forms.ModelForm):
             ),
             
         }
+# po_n = 101 if PurchaseOrder.objects.count() == 0 else PurchaseOrder.objects.aggregate(max=Max('po_no'))["max"] + 1       
+class PurchaseOrderForm(forms.ModelForm):
+    class Meta:
+        model = PurchaseOrder
+        fields = ['vendor_id']
         
-# class PurchaseUpdateForm(forms.ModelForm):
-
-#     class Meta:
-#         model = PurchasedItems
-#         fields = ['item_id', 'quantity','unit_price']
-        
-#         ch = list(Item.objects.all().values('item_id'))
-#         widgets = {
-#             "item_id": forms.Select(
-#                 choices=ch,
-#                 attrs={
-#                     "required": True,
-#                     "placeholder": "Entre name1",
-#                     "label": "Name",
-#                 }
+        ch1 = list(Vendor.objects.all().values('vendor_id'))
+        widgets = {
+            # "po_no": forms.HiddenInput(
+            #     attrs={
+            #         'readonly': True,
+            #         'value':po_n,
+            #     }
             
-#             ),
+            # ),
+            # "po_number": forms.HiddenInput(
+            #     attrs={
+            #         'readonly': True,
+            #         'value':(f'{"PO"}{po_n}'),
+            #     }
             
-#         }
+            # ),
+            "vendor_id": forms.Select(
+                choices=ch1,
+                attrs={
+                    "required": True,
+                }
+            
+            ),
+            
+        }

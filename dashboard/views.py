@@ -2,11 +2,11 @@ from multiprocessing import context
 import re
 from unicodedata import name
 from django.shortcuts import render,redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder
 from django.contrib.auth.models import User
-from .forms import CustomerForm, VendorForm, ItemForm,PurchasedItemForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm
 from django.contrib import messages
 from django.db.models import Q, Max, F
 
@@ -195,7 +195,26 @@ def stock(request):
 
 @login_required
 def purchase(request):
-    return render(request, 'purchase/purchase_orders.html')
+    vendors = Vendor.objects.all()
+    purchase_orders = PurchaseOrder.objects.all()
+    po_n = 101 if PurchaseOrder.objects.count() == 0 else PurchaseOrder.objects.aggregate(max=Max('po_no'))["max"] + 1
+    if request.method == 'POST':
+        # g_amount = request.POST.get('gross_amount')
+        # dis = request.POST.get('discount')
+        form = PurchaseOrderForm(request.POST)
+        ven = request.POST.get('vendor_id')
+        ven1 = vendors.get(id=ven)
+        if form.is_valid():
+            # form.save()
+            PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_id=ven1).save()
+            return redirect("purchase_add")
+    else:
+        form = PurchaseOrderForm
+    context = {
+        'purchase_orders' : purchase_orders,
+        'form' : form,
+    }
+    return render(request, 'purchase/purchase_orders.html',context)
 
 @login_required
 def purchase_add(request):
