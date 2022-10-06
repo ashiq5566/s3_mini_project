@@ -204,10 +204,11 @@ def purchase(request):
         form = PurchaseOrderForm(request.POST)
         ven = request.POST.get('vendor_id')
         ven1 = vendors.get(id=ven)
+        ven2 = vendors.get(pk=ven)
         if form.is_valid():
             # form.save()
             PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_id=ven1).save()
-            return redirect("purchase")
+            return redirect("purchase_add" ,ven2)
     else:
         form = PurchaseOrderForm
     context = {
@@ -217,18 +218,22 @@ def purchase(request):
     return render(request, 'purchase/purchase_orders.html',context)
 
 @login_required
-def purchase_add(request, pk):
+def purchase_add(request, vendor_id):
     vendors = Vendor.objects.all()
     items = Item.objects.all()
-    purchase_orders = PurchaseOrder.objects.get(id=pk)
+    # purchase_order = PurchaseOrder.objects.get(pk=vendor_id)
+    purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
+    # not need
     # field_name = 'total_amount'
     # total1 = PurchasedItems._meta.get_field(field_name)
     # g_amount = 0 if total1 == 0 else PurchasedItems.objects.aggregate(max=Max('total_amount'))["max"] + 10
     # t_amount = PurchasedItems.quantity * PurchasedItems.unit_price
     # purchased_items = PurchasedItems.objects.annotate(t_amount = F('quantity') - F('unit_price'))
     # total_spent =  PurchasedItems.objects.filter(id=id).annotate(total_spent=(F('quantity') * F('unit_price')))
+    # not need 
     if request.method == "POST":
+        # not need
         # vendor = request.POST.get('vendor_id')
         # i_id = request.POST.get('item_id')
         # qty = request.POST.get('quantity')
@@ -240,11 +245,11 @@ def purchase_add(request, pk):
         # return redirect('purchase_add')
         # PurchaseOrder(gross_amount=g_amount).save()
         # PurchasedItems(total_amount=total_spent).save()
+        # not need
         form = PurchasedItemForm(request.POST)
         if form.is_valid():
-            # PurchasedItems(item_id=Item.objects.get(item_id=i_id),vendor_id=Vendor.get(vendor_id=vendor),quantity=qty,unit_price=u_price).save()
             form.save()
-            return redirect('purchase_add')
+            # return redirect('purchase_add')
         
     else:
         form = PurchasedItemForm
@@ -258,30 +263,30 @@ def purchase_add(request, pk):
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
-@login_required
-def purchaseditem_update(request, id):
-    purchased_items = PurchasedItems.objects.get(pk=id)
-    form = PurchasedItemForm(request.POST or None, instance = purchased_items)
-    if form.is_valid():
-        form.save()
-        return redirect('purchase_add')
+# @login_required
+# def purchaseditem_update(request, id):
+#     purchased_items = PurchasedItems.objects.get(pk=id)
+#     form = PurchasedItemForm(request.POST or None, instance = purchased_items)
+#     if form.is_valid():
+#         form.save()
+#         return redirect('purchase_add')
     
-    context = {
-        'purchased_items' : purchased_items,
-        'form' : form,
-    }
-    return render(request, 'purchase/purchaseditem_update.html',context)
+#     context = {
+#         'purchased_items' : purchased_items,
+#         'form' : form,
+#     }
+#     return render(request, 'purchase/purchaseditem_update.html',context)
 
-@login_required
-def purchaseditem_delete(request, pk):
-    purchased_items = PurchasedItems.objects.get(id=pk)
-    if request.method == 'POST':
-        purchased_items.delete()
-        return redirect('purchase_add')
-    context = {
-        'purchased_items' : purchased_items,
-    }
-    return render(request, 'purchase/purchaseditem_delete.html',context)
+# @login_required
+# def purchaseditem_delete(request, pk):
+#     purchased_items = PurchasedItems.objects.get(id=pk)
+#     if request.method == 'POST':
+#         purchased_items.delete()
+#         # return redirect('purchase_add')
+#     context = {
+#         'purchased_items' : purchased_items,
+#     }
+#     return render(request, 'purchase/purchaseditem_delete.html',context)
 
 # @login_required
 # def addtocart(request):

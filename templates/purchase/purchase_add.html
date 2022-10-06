@@ -15,6 +15,9 @@
 			</form>
 		</div>
 		<div class="col-md-8">
+      <div class="text-right">
+        <h4><span class="badge badge-pill badge-primary">Primary</span></h4>
+      </div>
 			<div class="tbl-header">
 				<table cellpadding="0" cellspacing="0" border="0">
 				  <thead>
@@ -40,8 +43,8 @@
 					  <td>{{ purchased_item.quantity }}</td>
 					  <td>{{ purchased_item.unit_price }}</td>
 					  <td>{{ purchased_item.total_amt }}</td>
-					  <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchased_item.id %}">Edit</a></td>
-					  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchased_item.id %}">Delete</a></td>
+					  {% comment %} <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchased_item.id %}">Edit</a></td> {% endcomment %}
+					  {% comment %} <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchased_item.id %}">Delete</a></td> {% endcomment %}
 					</tr>
 					{% endfor %}
 				  </tbody>

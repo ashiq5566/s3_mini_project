@@ -43,7 +43,7 @@
                         <td>{{ purchase_order.gross_amount }}</td>
                         <td>{{ purchase_order.discount }}</td>
                         <td>{{ purchase_order.net_amount }}</td>
-                        <td><a href="{% url 'purchase_add' purchase_order.id %}">Explore</a></td>
+                        {% comment %} <td><a href="{% url 'purchase_add' purchase_order.id %}">Explore</a></td> {% endcomment %}
                       </tr>
                     {% endfor %}
                   </tbody>

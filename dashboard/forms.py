@@ -93,20 +93,12 @@ class PurchasedItemForm(forms.ModelForm):
     # unit_price = forms.IntegerField(label = 'UNIT_PRICE',widget=forms.TextInput(attrs={}))
     class Meta:
         model = PurchasedItems
-        fields = ['vendor_id','item_id', 'quantity','unit_price']
+        fields = ['item_id', 'quantity','unit_price']
         
         ch = list(Item.objects.all().values('item_id'))
-        ch1 = list(Vendor.objects.all().values('vendor_id'))
         widgets = {
             "item_id": forms.Select(
                 choices=ch,
-                attrs={
-                    "required": True,
-                }
-            
-            ),
-            "vendor_id": forms.Select(
-                choices=ch1,
                 attrs={
                     "required": True,
                 }
