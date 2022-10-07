@@ -3,6 +3,9 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% if user.is_authenticated and user.is_superuser %}
+
+{% else %}
 {% include 'partial/topnav_staff.html'%}
 
 <script></script>
@@ -52,6 +55,9 @@
         </div>
     </div>
 </div
+{% endif %}
+
+
 
 
 {% endblock %}

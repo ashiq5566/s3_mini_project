@@ -2,6 +2,8 @@
 {% block title %} STAFF PAGE {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated and user.is_superuser %}
+
 {% include 'partial/topnav_wm.html'%}
 
 <!-- tables -->
@@ -61,6 +63,8 @@
         </div>
     </div>
 </div>
-
+{% else %}
+<h1>Error</h1>
+{% endif %}
 <!--end tables -->
 {% endblock %}

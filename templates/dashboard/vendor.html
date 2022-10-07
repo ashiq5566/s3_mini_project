@@ -3,6 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% if user.is_authenticated and user.is_superuser %}
+
 {% include 'partial/topnav_wm.html'%}
 
 <div class="mx-5">
@@ -171,5 +173,8 @@
         </div>
     </div>
 </div>
+{% else %}
+<h1>Error</h1>
+{% endif %}
 
 {% endblock %}

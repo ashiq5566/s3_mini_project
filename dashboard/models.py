@@ -63,8 +63,14 @@ class PurchasedItems(models.Model):
     unit_price = models.IntegerField(null=True, default=0)
     total_amt = models.IntegerField(null=True)
      
+     
+    def __str__(self):
+            return self.po_number
+        
+        
     def total_amt(self):
         return self.quantity * self.unit_price
+    
     
     @property
     def item_name(self):

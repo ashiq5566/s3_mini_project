@@ -204,10 +204,13 @@ def purchase(request):
         form = PurchaseOrderForm(request.POST)
         ven = request.POST.get('vendor_id')
         ven1 = vendors.get(id=ven)
-        ven2 = vendors.get(pk=ven)
+        # ven1 = purchase_orders.get(id=ven)
         if form.is_valid():
             # form.save()
             PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_id=ven1).save()
+            po = (f'{"PO"}{po_n}')
+            # ven2 = purchase_orders.get(po_number=po)
+            ven2 = purchase_orders.values('po_number').filter(po_number=po)[0]['po_number']
             return redirect("purchase_add" ,ven2)
     else:
         form = PurchaseOrderForm
@@ -218,10 +221,11 @@ def purchase(request):
     return render(request, 'purchase/purchase_orders.html',context)
 
 @login_required
-def purchase_add(request, vendor_id):
+def purchase_add(request, po_number):
     vendors = Vendor.objects.all()
     items = Item.objects.all()
-    # purchase_order = PurchaseOrder.objects.get(pk=vendor_id)
+    # current_vendor_id = Vendor.objects.get(vendor_id=vendor_id)
+    # purchase_order = PurchaseOrder.objects.get(po_number=po_number)
     purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
     # not need
@@ -260,6 +264,7 @@ def purchase_add(request, vendor_id):
         'purchased_items' : purchased_items,
         'form' : form,
         'purchase_orders':purchase_orders,
+        # 'current_vendor_id' : current_vendor_id
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
