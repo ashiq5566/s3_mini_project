@@ -15,8 +15,8 @@ urlpatterns = [
     path('stock/',views.stock,name='stock'),
     path('purchase/',views.purchase,name='purchase'),
     path('purchase/add/<po_number>',views.purchase_add,name='purchase_add'),
-    # path('purchase/add/purchaseditem_update/<id>',views.purchaseditem_update,name='purchaseditem_update'),
-    # path('purchase/add/purchaseditem_delete/<int:pk>',views.purchaseditem_delete,name='purchaseditem_delete'),
+    path('purchase/add/purchaseditem_update/<id>',views.purchaseditem_update,name='purchaseditem_update'),
+    path('purchase/add/purchaseditem_delete/<id>',views.purchaseditem_delete,name='purchaseditem_delete'),
     # path('purchase/add/cart/',views.addtocart,name='add-to-cart'),
 
     path('demo/',views.demo,name='demo'),

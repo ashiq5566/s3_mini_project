@@ -52,7 +52,10 @@ class PurchaseOrder(models.Model):
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
     gross_amount = models.IntegerField(null=True)
     discount = models.IntegerField(null=True)
-    net_amount = models.IntegerField(null=True) 
+    net_amount = models.IntegerField(null=True)
+    
+    def __str__(self):
+            return self.po_number
     
 class PurchasedItems(models.Model):
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
@@ -62,10 +65,7 @@ class PurchasedItems(models.Model):
     quantity = models.PositiveIntegerField(null=True, default=0)
     unit_price = models.IntegerField(null=True, default=0)
     total_amt = models.IntegerField(null=True)
-     
-     
-    def __str__(self):
-            return self.po_number
+
         
         
     def total_amt(self):

@@ -224,7 +224,10 @@ def purchase(request):
 def purchase_add(request, po_number):
     vendors = Vendor.objects.all()
     items = Item.objects.all()
-    # current_vendor_id = Vendor.objects.get(vendor_id=vendor_id)
+    purchase_orders = PurchaseOrder.objects.all()
+    current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
+    current_vendor_id = purchase_orders.values('vendor_id').filter(po_number=po_number)[0]['vendor_id']
+    current_vendor_id1 = vendors.values('vendor_id').filter(id=current_vendor_id)[0]['vendor_id']
     # purchase_order = PurchaseOrder.objects.get(po_number=po_number)
     purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
@@ -251,9 +254,15 @@ def purchase_add(request, po_number):
         # PurchasedItems(total_amount=total_spent).save()
         # not need
         form = PurchasedItemForm(request.POST)
+        i_id=request.POST['item_id']
+        current_item_id = items.values('item_id').filter(id=i_id)[0]['item_id']
+        qty=request.POST['quantity']
+        uprice=request.POST['unit_price']
         if form.is_valid():
-            form.save()
-            # return redirect('purchase_add')
+            # form.save()
+            # return redirect('purchase_add', po_number)
+            PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_id=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
+            return redirect('purchase_add', po_number)
         
     else:
         form = PurchasedItemForm
@@ -264,34 +273,35 @@ def purchase_add(request, po_number):
         'purchased_items' : purchased_items,
         'form' : form,
         'purchase_orders':purchase_orders,
-        # 'current_vendor_id' : current_vendor_id
+        'current_po_number' : current_po_number,
+        'current_vendor_id1':current_vendor_id1
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
-# @login_required
-# def purchaseditem_update(request, id):
-#     purchased_items = PurchasedItems.objects.get(pk=id)
-#     form = PurchasedItemForm(request.POST or None, instance = purchased_items)
-#     if form.is_valid():
-#         form.save()
-#         return redirect('purchase_add')
+@login_required
+def purchaseditem_update(request, id):
+    purchased_items = PurchasedItems.objects.get(pk=id)
+    form = PurchasedItemForm(request.POST or None, instance = purchased_items)
+    if form.is_valid():
+        form.save()
+        return redirect('purchaseditem_update',id)
     
-#     context = {
-#         'purchased_items' : purchased_items,
-#         'form' : form,
-#     }
-#     return render(request, 'purchase/purchaseditem_update.html',context)
+    context = {
+        'purchased_items' : purchased_items,
+        'form' : form,
+    }
+    return render(request, 'purchase/purchaseditem_update.html',context)
 
-# @login_required
-# def purchaseditem_delete(request, pk):
-#     purchased_items = PurchasedItems.objects.get(id=pk)
-#     if request.method == 'POST':
-#         purchased_items.delete()
-#         # return redirect('purchase_add')
-#     context = {
-#         'purchased_items' : purchased_items,
-#     }
-#     return render(request, 'purchase/purchaseditem_delete.html',context)
+@login_required
+def purchaseditem_delete(request, id):
+    purchased_items = PurchasedItems.objects.get(pk=id)
+    if request.method == 'POST':
+        purchased_items.delete()
+        return redirect('purchaseditem_delete',id)
+    context = {
+        'purchased_items' : purchased_items,
+    }
+    return render(request, 'purchase/purchaseditem_delete.html',context)
 
 # @login_required
 # def addtocart(request):
