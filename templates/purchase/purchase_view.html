@@ -1,0 +1,55 @@
+{% extends 'partial/base.html' %}
+{% block title %} PURCHASE PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+
+<div class="mx-5">
+	<div class="row my-4">
+        <div class="col-md-4">
+			
+		</div>
+		<div class="col-md-8">
+      <div class="text-right">
+        {% comment %} <h4>Purchase Order:<span class="badge badge-pill badge-primary">{{current_po_number}}</span></h4> {% endcomment %}
+        {% comment %} <h4>Vendor:<span class="badge badge-pill badge-primary">{{current_vendor_id1}}</span></h4> {% endcomment %}
+      </div>
+			<div class="tbl-header">
+				<table cellpadding="0" cellspacing="0" border="0">
+				  <thead>
+					<tr>
+					  <th scope="col">ItemID</th>
+					  <th scope="col">Name</th>
+					  <th scope="col">Qty</th>
+					  <th scope="col">Unit_Price</th>
+					  <th scope="col">Total</th>
+					  <th scope="col"></th>
+					  <th scope="col"></th>
+					</tr>
+				  </thead>
+				</table>
+			  </div>
+			  <div class="tbl-content">
+				<table cellpadding="0" cellspacing="0" border="0">
+				  <tbody>
+					{% comment %} {% for purchase_order in purchase_orders %}
+					<tr>
+					  <td>{{ purchase_order.po_number }}</td>
+					  <td>{{ purchase_order.item_name }}</td>
+					  <td>{{ purchase_order.quantity }}</td>
+					  <td>{{ purchase_order.unit_price }}</td>
+					  <td>{{ purchase_order.total_amt }}</td> {% endcomment %}
+					  {% comment %} <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchased_item.id %}">Edit</a></td>
+					  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchased_item.id %}">Delete</a></td> {% endcomment %}
+					{% comment %} </tr> {% endcomment %}
+					{% comment %} {% endfor %} {% endcomment %}
+				  </tbody>
+				</table>
+			  </div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

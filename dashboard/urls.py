@@ -14,6 +14,7 @@ urlpatterns = [
     path('vendor/delete/<int:pk>',views.vendor_delete,name='dashboard-vendor-delete'),
     path('stock/',views.stock,name='stock'),
     path('purchase/',views.purchase,name='purchase'),
+    path('purchase/view/<int:pk>',views.purchase_view,name='purchase_view'),
     path('purchase/add/<po_number>',views.purchase_add,name='purchase_add'),
     path('purchase/add/purchaseditem_update/<id>',views.purchaseditem_update,name='purchaseditem_update'),
     path('purchase/add/purchaseditem_delete/<id>',views.purchaseditem_delete,name='purchaseditem_delete'),

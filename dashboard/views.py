@@ -219,6 +219,14 @@ def purchase(request):
         'form' : form,
     }
     return render(request, 'purchase/purchase_orders.html',context)
+@login_required
+def purchase_view(request, pk):
+    purchase_orders = PurchaseOrder.objects.get(id=pk)
+    context = {
+        'purchase_orders' : purchase_orders 
+    }
+    return render(request, 'purchase/purchase_view.html',context)
+
 
 @login_required
 def purchase_add(request, po_number):
@@ -274,7 +282,7 @@ def purchase_add(request, po_number):
         'form' : form,
         'purchase_orders':purchase_orders,
         'current_po_number' : current_po_number,
-        'current_vendor_id1':current_vendor_id1
+        'current_vendor_id1':current_vendor_id1,
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
