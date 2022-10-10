@@ -222,8 +222,12 @@ def purchase(request):
 @login_required
 def purchase_view(request, pk):
     purchase_orders = PurchaseOrder.objects.get(id=pk)
+    purchase_orders1 = PurchaseOrder.objects.all()
+    current_po_number = purchase_orders1.values('id').filter(id=pk)[0]['id']
+    purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_number)
     context = {
-        'purchase_orders' : purchase_orders 
+        'purchase_orders' : purchase_orders,
+        'purchase_order_views' : purchase_order_views
     }
     return render(request, 'purchase/purchase_view.html',context)
 
