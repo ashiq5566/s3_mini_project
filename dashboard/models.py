@@ -46,7 +46,7 @@ class Vendor(models.Model):
             return self.vendor_id
 
 class PurchaseOrder(models.Model):
-    date = models.DateField(null=True)
+    date = models.DateTimeField(auto_now_add=True)
     po_no = models.IntegerField(null=True)
     po_number = models.CharField(max_length=100, null=True, unique=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
