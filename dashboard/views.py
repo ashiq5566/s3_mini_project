@@ -243,6 +243,8 @@ def purchase_add(request, po_number):
     # purchase_order = PurchaseOrder.objects.get(po_number=po_number)
     purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
+    current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
+    purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
     # not need
     # field_name = 'total_amount'
     # total1 = PurchasedItems._meta.get_field(field_name)
@@ -287,6 +289,7 @@ def purchase_add(request, po_number):
         'purchase_orders':purchase_orders,
         'current_po_number' : current_po_number,
         'current_vendor_id1':current_vendor_id1,
+        'purchase_order_individals':purchase_order_individals
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
@@ -309,7 +312,7 @@ def purchaseditem_delete(request, id):
     purchased_items = PurchasedItems.objects.get(pk=id)
     if request.method == 'POST':
         purchased_items.delete()
-        return redirect('purchaseditem_delete',id)
+        # return redirect('purchaseditem_delete',id)
     context = {
         'purchased_items' : purchased_items,
     }

@@ -37,15 +37,15 @@
 			  <div class="tbl-content">
 				<table cellpadding="0" cellspacing="0" border="0">
 				  <tbody>
-					{% for purchased_item in purchased_items %}
+					{% for purchase_order_individal in purchase_order_individals %}
 					<tr>
-					  <td>{{ purchased_item.item_id }}</td>
-					  <td>{{ purchased_item.item_name }}</td>
-					  <td>{{ purchased_item.quantity }}</td>
-					  <td>{{ purchased_item.unit_price }}</td>
-					  <td>{{ purchased_item.total_amt }}</td>
-					  {% comment %} <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchased_item.id %}">Edit</a></td> {% endcomment %}
-					  {% comment %} <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchased_item.id %}">Delete</a></td> {% endcomment %}
+					  <td>{{ purchase_order_individal.item_id }}</td>
+					  <td>{{ purchase_order_individal.item_name }}</td>
+					  <td>{{ purchase_order_individal.quantity }}</td>
+					  <td>{{ purchase_order_individal.unit_price }}</td>
+					  <td>{{ purchase_order_individal.total_amt }}</td>
+					  <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchase_order_individal.id %}">Edit</a></td>
+					  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchase_order_individal.id %}">Delete</a></td>
 					</tr>
 					{% endfor %}
 				  </tbody>
