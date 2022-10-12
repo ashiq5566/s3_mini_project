@@ -63,13 +63,16 @@ class PurchasedItems(models.Model):
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
     item_name = models.CharField(max_length=100, null=True)
     quantity = models.PositiveIntegerField(null=True, default=0)
-    unit_price = models.IntegerField(null=True, default=0)
-    total_amt = models.IntegerField(null=True)
+    unit_price = models.PositiveIntegerField(null=True, default=0)
+    total_amt = models.PositiveIntegerField(null=True)
 
         
-        
-    def total_amt(self):
-        return self.quantity * self.unit_price
+    def save(self, *args, **kwargs):
+        self.total_amt = int(self.quantity) * int(self.unit_price)
+        super(PurchasedItems, self).save(*args, **kwargs) 
+    # def save(self):
+    #     total_amt = self.quantity * self.unit_price
+    #     return total_amt
     
     
     @property

@@ -8,7 +8,7 @@ from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseO
 from django.contrib.auth.models import User
 from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm
 from django.contrib import messages
-from django.db.models import Q, Max, F
+from django.db.models import Q, Max, F, Sum
 
 # reort generation report lab
 from django.http import FileResponse
@@ -245,6 +245,7 @@ def purchase_add(request, po_number):
     purchased_items = PurchasedItems.objects.all()
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
     purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
+    each_total_amount = PurchasedItems.objects.values('total_amt').filter(po_number_id=current_po_number_view)[0]['total_amt']
     # not need
     # field_name = 'total_amount'
     # total1 = PurchasedItems._meta.get_field(field_name)
@@ -270,8 +271,8 @@ def purchase_add(request, po_number):
         form = PurchasedItemForm(request.POST)
         i_id=request.POST['item_id']
         current_item_id = items.values('item_id').filter(id=i_id)[0]['item_id']
-        qty=request.POST['quantity']
-        uprice=request.POST['unit_price']
+        qty=int(request.POST['quantity'])
+        uprice=int(request.POST['unit_price'])
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
@@ -289,7 +290,8 @@ def purchase_add(request, po_number):
         'purchase_orders':purchase_orders,
         'current_po_number' : current_po_number,
         'current_vendor_id1':current_vendor_id1,
-        'purchase_order_individals':purchase_order_individals
+        'purchase_order_individals':purchase_order_individals,
+        'each_total_amount':each_total_amount
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
