@@ -245,7 +245,7 @@ def purchase_add(request, po_number):
     purchased_items = PurchasedItems.objects.all()
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
     purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
-    each_total_amount = PurchasedItems.objects.values('total_amt').filter(po_number_id=current_po_number_view)[0]['total_amt']
+    # each_total_amount = PurchasedItems.objects.values('total_amt').filter(po_number_id=current_po_number_view)[0]['total_amt']
     # not need
     # field_name = 'total_amount'
     # total1 = PurchasedItems._meta.get_field(field_name)
@@ -254,6 +254,13 @@ def purchase_add(request, po_number):
     # purchased_items = PurchasedItems.objects.annotate(t_amount = F('quantity') - F('unit_price'))
     # total_spent =  PurchasedItems.objects.filter(id=id).annotate(total_spent=(F('quantity') * F('unit_price')))
     # not need 
+    total_amt = 0
+    _id = PurchaseOrder.objects.get(po_number=po_number).id
+    print("LOGGGG:", _id)
+    for each in PurchasedItems.objects.filter(po_number__id=_id):
+        total_amt += each.total_amt
+    print("TOTAL:", total_amt)    
+    
     if request.method == "POST":
         # not need
         # vendor = request.POST.get('vendor_id')
@@ -291,7 +298,8 @@ def purchase_add(request, po_number):
         'current_po_number' : current_po_number,
         'current_vendor_id1':current_vendor_id1,
         'purchase_order_individals':purchase_order_individals,
-        'each_total_amount':each_total_amount
+        'total_amt':  total_amt,
+        # 'each_total_amount':each_total_amount
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
