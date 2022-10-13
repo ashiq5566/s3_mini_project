@@ -225,9 +225,14 @@ def purchase_view(request, pk):
     purchase_orders1 = PurchaseOrder.objects.all()
     current_po_number = purchase_orders1.values('id').filter(id=pk)[0]['id']
     purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_number)
+    total_amt = 0
+    _id = PurchaseOrder.objects.get(id=pk).id
+    for each in PurchasedItems.objects.filter(po_number__id=_id):
+        total_amt += each.total_amt
     context = {
         'purchase_orders' : purchase_orders,
-        'purchase_order_views' : purchase_order_views
+        'purchase_order_views' : purchase_order_views,
+        'total_amt' : total_amt
     }
     return render(request, 'purchase/purchase_view.html',context)
 
@@ -256,10 +261,10 @@ def purchase_add(request, po_number):
     # not need 
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
-    print("LOGGGG:", _id)
+    # print("LOGGGG:", _id)
     for each in PurchasedItems.objects.filter(po_number__id=_id):
         total_amt += each.total_amt
-    print("TOTAL:", total_amt)    
+    # print("TOTAL:", total_amt)    
     
     if request.method == "POST":
         # not need
