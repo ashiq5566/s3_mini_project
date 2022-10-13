@@ -245,54 +245,36 @@ def purchase_add(request, po_number):
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
     current_vendor_id = purchase_orders.values('vendor_id').filter(po_number=po_number)[0]['vendor_id']
     current_vendor_id1 = vendors.values('vendor_id').filter(id=current_vendor_id)[0]['vendor_id']
-    # purchase_order = PurchaseOrder.objects.get(po_number=po_number)
     purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
     purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
-    # each_total_amount = PurchasedItems.objects.values('total_amt').filter(po_number_id=current_po_number_view)[0]['total_amt']
-    # not need
-    # field_name = 'total_amount'
-    # total1 = PurchasedItems._meta.get_field(field_name)
-    # g_amount = 0 if total1 == 0 else PurchasedItems.objects.aggregate(max=Max('total_amount'))["max"] + 10
-    # t_amount = PurchasedItems.quantity * PurchasedItems.unit_price
-    # purchased_items = PurchasedItems.objects.annotate(t_amount = F('quantity') - F('unit_price'))
-    # total_spent =  PurchasedItems.objects.filter(id=id).annotate(total_spent=(F('quantity') * F('unit_price')))
-    # not need 
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
-    # print("LOGGGG:", _id)
     for each in PurchasedItems.objects.filter(po_number__id=_id):
         total_amt += each.total_amt
-    # print("TOTAL:", total_amt)    
+    # print("TOTAL:", total_amt) 
+    # print("LOGGGG:", _id)  
     
-    if request.method == "POST":
-        # not need
-        # vendor = request.POST.get('vendor_id')
-        # i_id = request.POST.get('item_id')
-        # qty = request.POST.get('quantity')
-        # u_price = request.POST.get('unit_price')
-        # s = items.filter(name=i_name).values('item_id')
-        # s = items.only('item_id').get(name=i_name).item_id
-        # s = items.values('name').filter(item_id=i_id)[0]['name']
-        # PurchasedItems.objects.create(item_id=items.get(item_id=i_id),item_name=s,vendor_id=vendors.get(vendor_id=vendor),quantity=qty,unit_price=u_price)
-        # return redirect('purchase_add')
-        # PurchaseOrder(gross_amount=g_amount).save()
-        # PurchasedItems(total_amount=total_spent).save()
-        # not need
+    if request.method == "POST":  
         form = PurchasedItemForm(request.POST)
         i_id=request.POST['item_id']
         current_item_id = items.values('item_id').filter(id=i_id)[0]['item_id']
         qty=int(request.POST['quantity'])
         uprice=int(request.POST['unit_price'])
+        # g_amount = request.POST['g_amount']
+        # discount = request.POST['discount']
+            # print("LOGGGG:", _id)  
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
             PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_id=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
+            # PurchaseOrder(gross_amount=g_amount,discount=discount).save()
             return redirect('purchase_add', po_number)
         
     else:
         form = PurchasedItemForm
+    
 
     context = { 
         'vendors': vendors,

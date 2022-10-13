@@ -87,10 +87,7 @@ class ItemForm(forms.ModelForm):
         }
 
 class PurchasedItemForm(forms.ModelForm):
-    # vendor_id = forms.ModelChoiceField(queryset=Vendor.objects.all(), initial=0,label = 'Vendor_ID',widget=forms.Select(attrs={}))
-    # item_id = forms.ModelChoiceField(queryset=Item.objects.all(), initial=0,label = 'ITEM_ID',widget=forms.Select(attrs={}))
-    # quantity = forms.IntegerField(label = 'ITEM_QTY',widget=forms.TextInput(attrs={}))
-    # unit_price = forms.IntegerField(label = 'UNIT_PRICE',widget=forms.TextInput(attrs={}))
+
     class Meta:
         model = PurchasedItems
         fields = ['item_id', 'quantity','unit_price']
