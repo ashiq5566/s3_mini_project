@@ -262,14 +262,13 @@ def purchase_add(request, po_number):
         current_item_id = items.values('item_id').filter(id=i_id)[0]['item_id']
         qty=int(request.POST['quantity'])
         uprice=int(request.POST['unit_price'])
-        # g_amount = request.POST['g_amount']
+        g_amount = request.POST.get('g_amount')
         # discount = request.POST['discount']
             # print("LOGGGG:", _id)  
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
             PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_id=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
-            # PurchaseOrder(gross_amount=g_amount,discount=discount).save()
             return redirect('purchase_add', po_number)
         
     else:
@@ -290,6 +289,26 @@ def purchase_add(request, po_number):
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
+@login_required
+def purchase_add_confirm(request ,po_number):
+    # purchase_orders = PurchaseOrder.objects.get(pk=po_number)
+    purchase_orders = PurchaseOrder.objects.all()
+    current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
+    print("current",current_po_number)
+    total_amt = 0
+    _id = PurchaseOrder.objects.get(po_number=po_number).id
+    for each in PurchasedItems.objects.filter(po_number__id=_id):
+        total_amt += each.total_amt
+    if request.method == "POST":
+        g=request.POST.get('g_amount')
+        d=request.POST.get('discount')
+        PurchaseOrder(gross_amount=g,discount=d).save
+        
+        
+    context = {
+        'total_amt' : total_amt
+    }
+    return render(request, 'purchase/purchase_confirm.html',context)
 @login_required
 def purchaseditem_update(request, id):
     purchased_items = PurchasedItems.objects.get(pk=id)

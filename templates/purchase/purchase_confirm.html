@@ -1,0 +1,22 @@
+{% extends 'partial/base.html' %}
+{% block title %} Purchse Order Confirm PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="border bg-white p-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    <label>Gross Total</label>
+                    <input type="text" name="g_amount" value="{{total_amt}}" />
+                    <label>Discount</label>
+                    <input type="text" name="discount" />
+                    <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm">  
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

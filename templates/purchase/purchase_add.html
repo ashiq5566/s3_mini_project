@@ -51,14 +51,8 @@
 				  </tbody>
 				</table>
 				<div class="text-right">
-					<form method="POST">
-            {% csrf_token %}
-            <label>Gross Total</label>
-						<input type="text" name="g_amount" value="{{total_amt}}" disabled/>
-            <label>Discount</label>
-						<input type="text" name="discount" />
-            {% comment %} <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm">   {% endcomment %}
-					</form>
+					<span>{{total_amt}}</span><br />
+					<a class="btn btn-danger btn-sm" href="{% url 'purchase_add_confirm' current_po_number %}">Confirm</a>
 				</div>
 			  </div>
 		</div>
