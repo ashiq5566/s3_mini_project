@@ -294,28 +294,33 @@ def purchase_add_confirm(request ,po_number):
     # purchase_orders = PurchaseOrder.objects.get(pk=po_number)
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
-    print("current",current_po_number)
+    # print("current",current_po_number)
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
         total_amt += each.total_amt
     if request.method == "POST":
-        g=request.POST.get('g_amount')
-        d=request.POST.get('discount')
-        PurchaseOrder(gross_amount=g,discount=d).save
-        
-        
+        g = request.POST.get('g_amount')
+        d = request.POST.get('discount')
+        record = PurchaseOrder.objects.get(po_number=current_po_number)
+        record.gross_amount = g
+        record.discount = d
+        net = int(g) - int(d)
+        record.net_amount = net
+        record.save()
+        return redirect('purchase')
     context = {
-        'total_amt' : total_amt
+        'total_amt' : total_amt,
+        
     }
     return render(request, 'purchase/purchase_confirm.html',context)
 @login_required
-def purchaseditem_update(request, id):
+def purchaseditem_update(request, id, po_number):
     purchased_items = PurchasedItems.objects.get(pk=id)
     form = PurchasedItemForm(request.POST or None, instance = purchased_items)
     if form.is_valid():
         form.save()
-        return redirect('purchaseditem_update',id)
+        return redirect('purchase_add',po_number)
     
     context = {
         'purchased_items' : purchased_items,
@@ -324,11 +329,11 @@ def purchaseditem_update(request, id):
     return render(request, 'purchase/purchaseditem_update.html',context)
 
 @login_required
-def purchaseditem_delete(request, id):
+def purchaseditem_delete(request, id, po_number):
     purchased_items = PurchasedItems.objects.get(pk=id)
     if request.method == 'POST':
         purchased_items.delete()
-        # return redirect('purchaseditem_delete',id)
+        return redirect('purchase_add',po_number)
     context = {
         'purchased_items' : purchased_items,
     }

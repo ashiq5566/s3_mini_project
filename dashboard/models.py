@@ -50,12 +50,16 @@ class PurchaseOrder(models.Model):
     po_no = models.IntegerField(null=True)
     po_number = models.CharField(max_length=100, null=True, unique=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
-    gross_amount = models.IntegerField(null=True)
-    discount = models.IntegerField(null=True)
-    net_amount = models.IntegerField(null=True)
+    gross_amount = models.PositiveIntegerField(null=True)
+    discount = models.PositiveIntegerField(null=True)
+    net_amount = models.PositiveIntegerField(null=True)
     
     def __str__(self):
             return self.po_number
+    
+    # def save(self, *args, **kwargs):
+    #     self.net_amount = int(self.gross_amount) - int(self.discount)
+    #     super(PurchaseOrder, self).save(*args, **kwargs)
     
 class PurchasedItems(models.Model):
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)

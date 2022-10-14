@@ -7,14 +7,22 @@
     <div class="row mt-5">
         <div class="col-md-6 offset-md-3">
             <div class="border bg-white p-3">
-                <form method="POST">
-                    {% csrf_token %}
-                    <label>Gross Total</label>
-                    <input type="text" name="g_amount" value="{{total_amt}}" />
-                    <label>Discount</label>
-                    <input type="text" name="discount" />
-                    <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm">  
-                </form>
+                <table>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <tr>
+                            <td><label>Gross Total</label></td>
+                            <td><input type="text" name="g_amount" value="{{total_amt}}" /><td />
+                        </tr>
+                        <tr>
+                            <td><label>Discount</label></td>
+                            <td><input type="text" name="discount" /></td>
+                        </tr>
+                        <tr>
+                            <td><input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm"></td>
+                        </tr>   
+                    </form>
+                </table>                   
             </div>
         </div>
     </div>
