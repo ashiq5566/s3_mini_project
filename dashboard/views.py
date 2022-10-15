@@ -178,7 +178,7 @@ def stock(request):
     items = Item.objects.all()
     p_id = 101 if Item.objects.count() == 0 else Item.objects.aggregate(max=Max('item_no'))["max"] + 1
     if request.method == 'POST':
-    #     i_id = request.POST.get('i_id')
+        #i_id = request.POST.get('i_id')
         price = request.POST.get('unit_price')
         name = request.POST.get('name')
         form = ItemForm(request.POST)
@@ -263,12 +263,14 @@ def purchase_add(request, po_number):
         qty=int(request.POST['quantity'])
         uprice=int(request.POST['unit_price'])
         g_amount = request.POST.get('g_amount')
-        # discount = request.POST['discount']
-            # print("LOGGGG:", _id)  
+        record = Item.objects.get(id=i_id)
+        print("sdsd", i_id)
+        record.qty_available = record.qty_available + qty 
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
             PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_id=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
+            record.save()
             return redirect('purchase_add', po_number)
         
     else:
@@ -291,10 +293,17 @@ def purchase_add(request, po_number):
 
 @login_required
 def purchase_add_confirm(request ,po_number):
-    # purchase_orders = PurchaseOrder.objects.get(pk=po_number)
+    # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
     # print("current",current_po_number)
+    # qty_available = 0
+    # l = PurchaseOrder.objects.get(po_number=po_number).id
+    # cc = PurchasedItems.objects.filter(po_number=l)
+    # for each in PurchasedItems.objects.filter(po_number=l):
+        
+    # print("current",cc)
+    
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):

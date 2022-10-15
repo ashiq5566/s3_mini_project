@@ -111,20 +111,7 @@ class PurchaseOrderForm(forms.ModelForm):
         
         ch1 = list(Vendor.objects.all().values('vendor_id'))
         widgets = {
-            # "po_no": forms.HiddenInput(
-            #     attrs={
-            #         'readonly': True,
-            #         'value':po_n,
-            #     }
-            
-            # ),
-            # "po_number": forms.HiddenInput(
-            #     attrs={
-            #         'readonly': True,
-            #         'value':(f'{"PO"}{po_n}'),
-            #     }
-            
-            # ),
+           
             "vendor_id": forms.Select(
                 choices=ch1,
                 attrs={
@@ -134,3 +121,8 @@ class PurchaseOrderForm(forms.ModelForm):
             ),
             
         }
+
+class StockUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['qty_available']
