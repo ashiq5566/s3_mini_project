@@ -225,6 +225,10 @@ def purchase_view(request, pk):
     purchase_orders1 = PurchaseOrder.objects.all()
     current_po_number = purchase_orders1.values('id').filter(id=pk)[0]['id']
     purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_number)
+    current_purchase_orderid = PurchaseOrder.objects.get(id=pk).id
+    discount = PurchaseOrder.objects.get(id=current_po_number).discount
+    net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
+    
     total_amt = 0
     _id = PurchaseOrder.objects.get(id=pk).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
@@ -232,7 +236,10 @@ def purchase_view(request, pk):
     context = {
         'purchase_orders' : purchase_orders,
         'purchase_order_views' : purchase_order_views,
-        'total_amt' : total_amt
+        'total_amt' : total_amt,
+        'discount' : discount,
+        'net_amt' : net_amt,
+        'current_purchase_orderid' : current_purchase_orderid
     }
     return render(request, 'purchase/purchase_view.html',context)
 
@@ -296,6 +303,8 @@ def purchase_add_confirm(request ,po_number):
     # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
+    current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
+    purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
     
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
@@ -314,26 +323,29 @@ def purchase_add_confirm(request ,po_number):
     
     context = {
         'total_amt' : total_amt,
+        'purchase_order_individals':purchase_order_individals,
+        'current_po_number' : current_po_number
         
     }
     return render(request, 'purchase/purchase_confirm.html',context)
-@login_required
-def purchaseditem_update(request, id, po_number):
-    purchased_items = PurchasedItems.objects.get(pk=id)
-    form = PurchasedItemForm(request.POST or None, instance = purchased_items)
-    if form.is_valid():
-        form.save()
-        return redirect('purchase_add',po_number)
+
+# @login_required
+# def purchaseditem_update(request, id, po_number):
+#     purchased_items = PurchasedItems.objects.get(pk=id)
+#     form = PurchasedItemForm(request.POST or None, instance = purchased_items)
+#     if form.is_valid():
+#         form.save()
+#         return redirect('purchase_add',po_number)
     
-    context = {
-        'purchased_items' : purchased_items,
-        'form' : form,
-    }
-    return render(request, 'purchase/purchaseditem_update.html',context)
+#     context = {
+#         'purchased_items' : purchased_items,
+#         'form' : form,
+#     }
+#     return render(request, 'purchase/purchaseditem_update.html',context)
 
 @login_required
 def purchaseditem_delete(request, id, po_number):
-    items = Item.objects.all() 
+    items = Item.objects.all()
     purchased_items = PurchasedItems.objects.get(pk=id)
     record = PurchasedItems.objects.get(pk=id).item_id
     qty = PurchasedItems.objects.get(pk=id).quantity
@@ -349,6 +361,52 @@ def purchaseditem_delete(request, id, po_number):
         'purchased_items' : purchased_items,
     }
     return render(request, 'purchase/purchaseditem_delete.html',context)
+
+@login_required
+def report_pdf(request, pk):
+    vendors = Vendor.objects.all()
+    purchase_orders = PurchaseOrder.objects.all()
+    purchase_orders = PurchaseOrder.objects.get(id=pk)
+    purchase_orders1 = PurchaseOrder.objects.all()
+    current_po_id = purchase_orders1.values('id').filter(id=pk)[0]['id']
+    purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_id)
+    current_po_no = PurchaseOrder.objects.get(id=current_po_id).po_number
+    current_vendor_id = PurchaseOrder.objects.get(id=current_po_id).vendor_id
+    print_date = PurchaseOrder.objects.get(id=current_po_id).date
+    discount = PurchaseOrder.objects.get(id=current_po_id).discount
+    net_amt = PurchaseOrder.objects.get(id=current_po_id).net_amount
+    total_amt = 0
+    _id = PurchaseOrder.objects.get(id=pk).id
+    for each in PurchasedItems.objects.filter(po_number__id=_id):
+        total_amt += each.total_amt
+    template_path = 'pdf/purchase_order_pdf.html'
+    context = {
+        'current_po_id' : current_po_id,
+        'print_date' : print_date,
+        'purchase_order_views' : purchase_order_views,
+        'discount' : discount,
+        'net_amt'  : net_amt,
+        'total_amt' : total_amt,
+        'current_po_no' : current_po_no,
+        'current_vendor_id' : current_vendor_id
+        
+        
+    }
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
 
 # @login_required
 # def addtocart(request):
@@ -480,25 +538,25 @@ def product_edit(request, pk):
     # return render(request, 'dashboard/staff_order_delete.html' )
 #xhtml2pdf
 
-@login_required
-def report_pdf(request):
-    items = Product.objects.all()
-    template_path = 'dashboard/product_pdf.html'
-    context = {'items': items}
-    # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
+# @login_required
+# def report_pdf(request):
+#     items = Product.objects.all()
+#     template_path = 'dashboard/product_pdf.html'
+#     context = {'items': items}
+#     # Create a Django response object, and specify content_type as pdf
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'filename="report.pdf"'
+#     # find the template and render it.
+#     template = get_template(template_path)
+#     html = template.render(context)
 
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
-    # if error then show some funny view
-    if pisa_status.err:
-       return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
+#     # create a pdf
+#     pisa_status = pisa.CreatePDF(
+#        html, dest=response)
+#     # if error then show some funny view
+#     if pisa_status.err:
+#        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+#     return response
 
 
 

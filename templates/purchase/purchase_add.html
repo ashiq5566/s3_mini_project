@@ -29,7 +29,6 @@
 					  <th scope="col">Unit_Price</th>
 					  <th scope="col">Total</th>
 					  <th scope="col"></th>
-					  <th scope="col"></th>
 					</tr>
 				  </thead>
 				</table>
@@ -44,7 +43,7 @@
 					  <td>{{ purchase_order_individal.quantity }}</td>
 					  <td>{{ purchase_order_individal.unit_price }}</td>
 					  <td>{{ purchase_order_individal.total_amt }}</td>
-					  <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchase_order_individal.po_number purchase_order_individal.id  %}">Edit</a></td>
+					  {% comment %} <td scope="row"><a class="btn btn-info btn-sm" href="{% url 'purchaseditem_update' purchase_order_individal.po_number purchase_order_individal.id  %}">Edit</a></td> {% endcomment %}
 					  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'purchaseditem_delete'  purchase_order_individal.po_number purchase_order_individal.id %}">Delete</a></td>
 					</tr>
 					{% endfor %}

@@ -47,14 +47,21 @@
 				  </tbody>
 				</table>
 				<div class="text-right">
-					<label>Total</label>
+					<label>Gross Total</label>
 					<span>{{total_amt}}</span><br />
+					<label>Discount</label>
+					<span>{{discount}}</span><br />
+					<label>Net Amount</label>
+					<span>{{net_amt}}</span><br />
 					{% comment %} <label>Discont</label>
 					<span>{{d}}</span><br />
 					<label>Net_Amount</label>
 					<span>{{net}}</span> {% endcomment %}
 				</div>
 			  </div>
+			  <div class="text-right">
+				<a class="btn btn-info text-right" href="{% url 'report_pdf'  current_purchase_orderid %}">Print<span class="sr-only">(current)</span></a>
+			</div>  
 		</div>
 	</div>
 </div>
