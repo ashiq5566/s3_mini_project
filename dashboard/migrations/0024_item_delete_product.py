@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('item_id', models.CharField(max_length=10, null=True, unique=True)),
                 ('name', models.CharField(max_length=100, null=True)),
                 ('unit_price', models.PositiveBigIntegerField(null=True)),
-                ('qty_available', models.PositiveIntegerField(default=0, null=True)),
+                ('qty_purchased', models.PositiveIntegerField(default=0, null=True)),
                 ('qty_sold', models.PositiveIntegerField(default=0, null=True)),
                 ('status', models.BooleanField(default=False)),
             ],

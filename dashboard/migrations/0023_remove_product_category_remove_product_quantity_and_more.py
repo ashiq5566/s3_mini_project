@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='product',
-            name='qty_available',
+            name='qty_purchased',
             field=models.PositiveIntegerField(default=0, null=True),
         ),
         migrations.AddField(

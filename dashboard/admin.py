@@ -10,7 +10,7 @@ class VendorAdmin(admin.ModelAdmin):
     list_display = ('vendor_id','vendor_name', 'vendor_address','vendor_mobile')
     
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('item_id','name','unit_price','qty_available','qty_sold','status')
+    list_display = ('item_id','name','unit_price','qty_purchased','qty_sold','status')
 
 class PurchaseOrderAdmin(admin.ModelAdmin):
     list_display = ('date','po_number','vendor_id','gross_amount','discount','net_amount')

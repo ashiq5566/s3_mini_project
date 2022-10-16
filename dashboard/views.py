@@ -265,7 +265,7 @@ def purchase_add(request, po_number):
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_id)
         print("sdsd", i_id)
-        record.qty_available = record.qty_available + qty 
+        record.qty_purchased = record.qty_purchased + qty 
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
@@ -296,13 +296,6 @@ def purchase_add_confirm(request ,po_number):
     # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
-    # print("current",current_po_number)
-    # qty_available = 0
-    # l = PurchaseOrder.objects.get(po_number=po_number).id
-    # cc = PurchasedItems.objects.filter(po_number=l)
-    # for each in PurchasedItems.objects.filter(po_number=l):
-        
-    # print("current",cc)
     
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
@@ -318,6 +311,7 @@ def purchase_add_confirm(request ,po_number):
         record.net_amount = net
         record.save()
         return redirect('purchase')
+    
     context = {
         'total_amt' : total_amt,
         
@@ -339,9 +333,17 @@ def purchaseditem_update(request, id, po_number):
 
 @login_required
 def purchaseditem_delete(request, id, po_number):
+    items = Item.objects.all() 
     purchased_items = PurchasedItems.objects.get(pk=id)
+    record = PurchasedItems.objects.get(pk=id).item_id
+    qty = PurchasedItems.objects.get(pk=id).quantity
+    stock = Item.objects.get(item_id=record)
+    print("gello", qty)
     if request.method == 'POST':
         purchased_items.delete()
+        stock.qty_purchased = stock.qty_purchased - qty
+        stock.save()
+        
         return redirect('purchase_add',po_number)
     context = {
         'purchased_items' : purchased_items,

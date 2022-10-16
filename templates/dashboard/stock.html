@@ -120,7 +120,7 @@
                         <th scope="col">Product_id</th>
                         <th scope="col">Name</th>
                         <th scope="col">Unit_Price</th>
-                        <th scope="col">QTY_Available</th>
+                        <th scope="col">qty_purchased</th>
                         <th scope="col">QTY_Sold</th>
                         <th scope="col">Status</th>
                       </tr>
@@ -135,7 +135,7 @@
                           <td>{{ item.item_id }}</td>
                           <td>{{ item.name }}</td>
                           <td>{{ item.unit_price }}</td>
-                          <td>{{ item.qty_available }}</td>
+                          <td>{{ item.qty_purchased }}</td>
                           <td>{{ item.qty_sold }}</td>
                           {% if item.status == True %}
                           <td>Available</td>

@@ -125,4 +125,4 @@ class PurchaseOrderForm(forms.ModelForm):
 class StockUpdateForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['qty_available']
+        fields = ['qty_purchased']
