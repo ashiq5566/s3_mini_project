@@ -226,6 +226,10 @@ def purchase_view(request, pk):
     current_po_number = purchase_orders1.values('id').filter(id=pk)[0]['id']
     purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_number)
     current_purchase_orderid = PurchaseOrder.objects.get(id=pk).id
+    current_po = PurchaseOrder.objects.get(id=current_po_number).po_number
+    current_vendor = PurchaseOrder.objects.get(id=current_po_number).vendor_id
+    current_vendor_name = Vendor.objects.get(vendor_id=current_vendor).vendor_name
+    po_date = PurchaseOrder.objects.get(id=current_po_number).date
     discount = PurchaseOrder.objects.get(id=current_po_number).discount
     net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
     
@@ -239,7 +243,11 @@ def purchase_view(request, pk):
         'total_amt' : total_amt,
         'discount' : discount,
         'net_amt' : net_amt,
-        'current_purchase_orderid' : current_purchase_orderid
+        'current_purchase_orderid' : current_purchase_orderid,
+        'current_po' : current_po,
+        'current_vendor' : current_vendor,
+        'po_date' : po_date,
+        'current_vendor_name' : current_vendor_name
     }
     return render(request, 'purchase/purchase_view.html',context)
 
