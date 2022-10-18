@@ -1,0 +1,22 @@
+{% extends 'partial/base.html' %}
+{% block title %} PAYMENT PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="mx-5">
+    <form method = "POST">
+        {% csrf_token %}
+        {% comment %} {{form|crispy}} {% endcomment %}
+        <div class="form-group text-right">
+            <select name="v_id" class="form-select">
+                {% for vendor in vendors  %}
+                <option>{{vendor.vendor_id}}</option>
+                {% endfor %}
+            </select>
+            <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+        </div>
+    </form>
+</div>      
+
+{% endblock %}

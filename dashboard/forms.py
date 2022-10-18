@@ -2,7 +2,7 @@ from pyexpat import model
 from tkinter.ttk import Widget
 from django import forms
 from django.forms import HiddenInput
-from .models import Customer, PurchaseOrder, Vendor, Item, PurchasedItems,PurchaseOrder
+from .models import Customer, PurchaseOrder, Vendor, Item, PurchasedItems,PurchaseOrder,Payment
 from django.db.models import Q, Max, F
 
 
@@ -126,3 +126,24 @@ class StockUpdateForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = ['qty_purchased']
+    
+# class SelectVendorForm(forms.Form):
+#     ch2 = list(Vendor.objects.all().values('vendor_id'))
+#     vendor_id = forms.ChoiceField(choices=ch2)
+# class SelectVendorForm(forms.ModelForm):
+#     class Meta:
+#         model = PurchaseOrder
+#         fields = ['vendor_id']
+        
+#         c = list(Vendor.objects.all().values('vendor_id'))
+#         widgets = {
+           
+#             "vendor_id": forms.Select(
+#                 choices=c,
+#                 attrs={
+#                     "required": True,
+#                 }
+            
+#             ),
+            
+#         }

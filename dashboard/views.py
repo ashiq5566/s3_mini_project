@@ -414,21 +414,21 @@ def report_pdf(request, pk):
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
-
-
-# @login_required
-# def addtocart(request):
-#     if request.method == 'POST':
-#         prod_id =  request.POST.get('product_id')
-#         qty_input = request.POST.get('product_qty')
-#         product_check = Item.objects.get(item_id=prod_id)
-#         if (product_check):
-#             PurchasedItems.objects.create(item_id=prod_id,quantity=qty_input)
-#             return JsonResponse({'status':"added"})
-#         else:
-#             return JsonResponse({'status':"no such pro"})
-#     return redirect('purchase_add')
-        
+  
+def payment(request):
+    vendors = Vendor.objects.all()
+    # if request.method == "POST":  
+    #     form = SelectVendorForm(request.POST)
+    # else:
+    #     form = SelectVendorForm()
+    if request.method == 'POST':
+        v = request.POST.get('v_id')
+        print("gwgw" ,v)
+    context = {
+        "vendors" : vendors,
+        # "form" : form
+    }
+    return render(request, 'payment/payment_add.html',context)      
         
 
 @login_required
@@ -544,27 +544,8 @@ def product_edit(request, pk):
         # return redirect('dashboard-index')
 
     # return render(request, 'dashboard/staff_order_delete.html' )
-#xhtml2pdf
 
-# @login_required
-# def report_pdf(request):
-#     items = Product.objects.all()
-#     template_path = 'dashboard/product_pdf.html'
-#     context = {'items': items}
-#     # Create a Django response object, and specify content_type as pdf
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="report.pdf"'
-#     # find the template and render it.
-#     template = get_template(template_path)
-#     html = template.render(context)
 
-#     # create a pdf
-#     pisa_status = pisa.CreatePDF(
-#        html, dest=response)
-#     # if error then show some funny view
-#     if pisa_status.err:
-#        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-#     return response
 
 
 

@@ -1,4 +1,5 @@
 from email.policy import default
+from pyexpat import model
 import uuid
 from django.db import models
 # from dashboard.views import product
@@ -83,4 +84,10 @@ class PurchasedItems(models.Model):
     @property
     def item_name(self):
         return self.item_id.name
-       
+            
+class Payment(models.Model):
+    payment_no = models.IntegerField(null=True)
+    payment_id = models.CharField(max_length=100, null=True, unique=True)
+    po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
+    paid = models.PositiveIntegerField(null=True)
+    pending = models.PositiveIntegerField(null=True)
