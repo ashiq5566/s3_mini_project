@@ -7,14 +7,14 @@
 <div class="mx-5">
     <form method = "POST">
         {% csrf_token %}
-        {% comment %} {{form|crispy}} {% endcomment %}
+        {{form|crispy}}
+        <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
         <div class="form-group text-right">
-            <select name="v_id" class="form-select">
+            {% comment %} <select name="v_id" class="selectpicker">
                 {% for vendor in vendors  %}
                 <option>{{vendor.vendor_id}}</option>
                 {% endfor %}
-            </select>
-            <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+            </select> {% endcomment %}
         </div>
     </form>
 </div>      

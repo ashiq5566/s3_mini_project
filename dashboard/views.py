@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder
 from django.contrib.auth.models import User
-from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm
 from django.contrib import messages
 from django.db.models import Q, Max, F, Sum
 
@@ -417,19 +417,27 @@ def report_pdf(request, pk):
   
 def payment(request):
     vendors = Vendor.objects.all()
-    # if request.method == "POST":  
-    #     form = SelectVendorForm(request.POST)
-    # else:
-    #     form = SelectVendorForm()
-    if request.method == 'POST':
-        v = request.POST.get('v_id')
-        print("gwgw" ,v)
+    if request.method == "POST":  
+        form = SelectVendorForm(request.POST)
+        v = request.POST.get('vendor_id')
+        v_id = Vendor.objects.get(id=v).vendor_id
+        print("gwgw" ,v_id)
+        return redirect('payment_vendor', v_id)
+        
+
+    else:
+        form = SelectVendorForm()
+    # if request.method == 'POST':
+    #     v = request.POST.get('v_id')
     context = {
         "vendors" : vendors,
-        # "form" : form
+        "form" : form
     }
-    return render(request, 'payment/payment_add.html',context)      
-        
+    return render(request, 'payment/payment_add.html',context)  
+    
+def payment_vendor(request, vendor_id):
+   
+    return render(request, 'payment/payment_vendor.html')      
 
 @login_required
 def demo(request):

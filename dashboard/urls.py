@@ -21,6 +21,7 @@ urlpatterns = [
     # path('purchase/add/<po_number>/purchaseditem_update/<int:id>',views.purchaseditem_update,name='purchaseditem_update'),
     path('purchase/add/<po_number>/purchaseditem_delete/<int:id>',views.purchaseditem_delete,name='purchaseditem_delete'),
     path('payment/',views.payment,name='payment'),
+    path('payment/<vendor_id>',views.payment_vendor,name='payment_vendor'),
 
     path('demo/',views.demo,name='demo'),
 ]

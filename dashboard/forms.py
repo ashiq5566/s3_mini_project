@@ -127,9 +127,9 @@ class StockUpdateForm(forms.ModelForm):
         model = Item
         fields = ['qty_purchased']
     
-# class SelectVendorForm(forms.Form):
-#     ch2 = list(Vendor.objects.all().values('vendor_id'))
-#     vendor_id = forms.ChoiceField(choices=ch2)
+class SelectVendorForm(forms.Form):
+    # ch2 = list(PurchaseOrder.objects.all().values('vendor_id'))
+    vendor_id = forms.ModelChoiceField(queryset=Vendor.objects.all())
 # class SelectVendorForm(forms.ModelForm):
 #     class Meta:
 #         model = PurchaseOrder
