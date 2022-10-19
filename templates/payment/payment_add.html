@@ -5,18 +5,24 @@
 {% block content %}
 {% include 'partial/topnav_staff.html'%}
 <div class="mx-5">
-    <form method = "POST">
-        {% csrf_token %}
-        {{form|crispy}}
-        <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
-        <div class="form-group text-right">
-            {% comment %} <select name="v_id" class="selectpicker">
-                {% for vendor in vendors  %}
-                <option>{{vendor.vendor_id}}</option>
-                {% endfor %}
-            </select> {% endcomment %}
+    <div class="row my-4">
+        <div class="col-md-4">
+            <form method = "POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+                <div class="form-group text-right">
+                    {% comment %} <select name="v_id" class="selectpicker">
+                        {% for vendor in vendors  %}
+                        <option>{{vendor.vendor_id}}</option>
+                        {% endfor %}
+                    </select> {% endcomment %}
+                </div>
+            </form>
         </div>
-    </form>
+        <div class="col-md-4">
+        </div>
+    </div>
 </div>      
 
 {% endblock %}
