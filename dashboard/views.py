@@ -439,15 +439,25 @@ def payment_vendor(request, vendor_id):
     vid = Vendor.objects.get(vendor_id=vendor_id).id
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
-    print("gdgd",vid)
-    purchase_orders = PurchaseOrder.objects.filter(vendor_id=vid)
+    purchase_orders = PurchaseOrder.objects.all()
+    # po_id = PurchaseOrder.objects.get()
     
     context = {
         "current_vendor_id" : current_vendor_id,
         "current_vendor_name" : current_vendor_name,
-        "purchase_orders" : purchase_orders
+        "purchase_orders" : purchase_orders,
     }
-    return render(request, 'payment/payment_vendor.html',context)      
+    return render(request, 'payment/payment_vendor.html',context)     
+
+def payment_purchase_order(request,vendor_id, pk):
+    purchase_orders = PurchaseOrder.objects.get(id=pk)
+    current_po = PurchaseOrder.objects.get(id=pk).po_number
+      
+    context = {
+        "purchase_orders" : purchase_orders,
+        "current_po" : current_po,
+    }
+    return render(request, 'payment/payment_purchase_order.html',context)   
 
 @login_required
 def demo(request):

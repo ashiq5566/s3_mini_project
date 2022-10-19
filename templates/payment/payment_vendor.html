@@ -8,36 +8,32 @@
     <div class="row my-4">
         {% comment %} <div class="col-md-4">
         </div> {% endcomment %}
-        <div class="col-md-12">
-            <div class="text-right">
-                <h4>VendorID:<span class="badge badge-pill badge-primary">{{current_vendor_id}}</span></h4>
-                <h4>VendorName:<span class="badge badge-pill badge-primary">{{current_vendor_name}}</span></h4>
+        <div class="col-md-8">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<thead class="tbl-header">
+				<tr>
+					<th scope="col">PO_NO</th>
+					<th scope="col">Net_Amount</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for purchase_order in purchase_orders %}
+					<tr>
+						<td>{{ purchase_order.po_number }}</td>
+						<td>{{ purchase_order.net_amount }}</td>
+						<td><a href="{% url 'payment_purchase_order' purchase_order.vendor_id purchase_order.id %}">View</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+            
+		</div>
+		<div class="col-md-4">
+			<div class="text-right">
+                <h5>VendorID:<span class="badge badge-pill badge-primary">{{current_vendor_id}}</span></h5>
+                <h5>VendorName:<span class="badge badge-pill badge-primary">{{current_vendor_name}}</span></h5>
             </div>
-            <div class="tbl-header">
-                <table cellpadding="0" cellspacing="0" border="0">
-                  <thead>
-                    <tr>
-                      {% comment %} <th scope="col">Date</th> {% endcomment %}
-                      <th scope="col">PO_NO</th>
-                      <th scope="col">Net_Amount</th>
-                    </tr>
-                  </thead>
-                </table>
-            </div>
-            <div class="tbl-content">
-                <table cellpadding="0" cellspacing="0" border="0">
-                  <tbody>
-                    {% for purchase_order in purchase_orders %}
-                      <tr>
-                        {% comment %} <td>{{ purchase_order.date }}</td> {% endcomment %}
-                        <td>{{ purchase_order.po_number }}</td>
-                        <td>{{ purchase_order.net_amount }}</td>
-                        {% comment %} <td><a href="{% url 'purchase_view' purchase_order.id %}">View</a></td> {% endcomment %}
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
         </div>
     </div>
 </div>
