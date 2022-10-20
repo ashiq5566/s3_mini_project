@@ -439,7 +439,7 @@ def payment_vendor(request, vendor_id):
     vid = Vendor.objects.get(vendor_id=vendor_id).id
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
-    purchase_orders = PurchaseOrder.objects.all()
+    purchase_orders = PurchaseOrder.objects.filter(vendor_id_id =vid)
     # po_id = PurchaseOrder.objects.get()
     
     context = {
@@ -449,28 +449,34 @@ def payment_vendor(request, vendor_id):
     }
     return render(request, 'payment/payment_vendor.html',context)     
 
+
 def payment_purchase_order(request,vendor_id, pk):
+    payments = Payment.objects.all()
     purchase_orders = PurchaseOrder.objects.get(id=pk)
     purchase_orders1 = PurchaseOrder.objects.all()
     current_po = PurchaseOrder.objects.get(id=pk).po_number
+    current_ve = PurchaseOrder.objects.get(id=pk).vendor_id
+    current_id = PurchaseOrder.objects.get(id=pk).id
     net_total = PurchaseOrder.objects.get(id=pk).net_amount
-    # pending_a = PurchaseOrder.objects.get(id=pk).net_amount
     
     payment_no = 101 if Payment.objects.count() == 0 else Payment.objects.aggregate(max=Max('payment_no'))["max"] + 1
+    
+    pending = PurchaseOrder.objects.get(id=pk).net_amount
     if request.method == "POST":
         # total = request.POST.get('total')
-        pending = request.POST.get('pending')
+        # pending_a = request.POST.get('pend')
         paid_amt = request.POST.get('paid')
-        # pending_amt = int(pending_a) - int(paid_amt)
+        # pending = int(net_total) - int(paid_amt)
+        # pending_amount = PurchaseOrder.objects.get(po_number=current_po).net_pending
+        Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
+        pending = PurchaseOrder.objects.get(id=pk).net_amount
+        for each in Payment.objects.filter(po_number__id=pk):
+                pending -= each.paid
+        record = PurchaseOrder.objects.get(po_number=current_po)
+        record.net_pending = pending
+        record.save()
+        return redirect('payment_purchase_order',current_ve,current_id)
         
-        # Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
-                
-        
-        
-        
-    
-    
-      
     context = {
         "purchase_orders" : purchase_orders,
         "current_po" : current_po,

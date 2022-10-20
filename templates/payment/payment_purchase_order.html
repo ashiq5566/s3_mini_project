@@ -16,7 +16,7 @@
                     </tr>
                     <tr>
                         <td><label>Pending</label></td>
-                        <td><input type="text" name="pending" value="{{net_total}}" readonly /></td>
+                        <td><input type="text" name="pend" value="{{purchase_orders.net_pending}}" readonly /></td>
                     </tr>
                     <tr>
                         <td><label>Enter Amount</label></td>
@@ -31,6 +31,7 @@
         <div class="col-md-7">
             <div class="text-right">
                 <h5>PurchaseOrder:<span class="badge badge-pill badge-primary">{{current_po}}</span></h5>
+                <h5>Pending Amount:<span class="badge badge-pill badge-primary">{{purchase_orders.net_pending}}</span></h5>
             </div>
         </div>
     </div>

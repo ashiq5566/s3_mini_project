@@ -55,6 +55,7 @@ class PurchaseOrder(models.Model):
     gross_amount = models.PositiveIntegerField(null=True)
     discount = models.PositiveIntegerField(null=True)
     net_amount = models.PositiveIntegerField(null=True)
+    net_pending = models.PositiveIntegerField(null=True,default=0)
     
     def __str__(self):
             return self.po_number
@@ -90,6 +91,6 @@ class Payment(models.Model):
     payment_no = models.IntegerField(null=True)
     payment_id = models.CharField(max_length=100, null=True, unique=True)
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
-    paid = models.PositiveIntegerField(null=True)
+    paid = models.PositiveIntegerField(null=True,default=0)
     total = models.PositiveIntegerField(null=True)
     pending = models.PositiveIntegerField(null=True,default=0)
