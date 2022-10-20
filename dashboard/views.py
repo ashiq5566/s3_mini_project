@@ -4,7 +4,7 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder
+from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment
 from django.contrib.auth.models import User
 from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm
 from django.contrib import messages
@@ -451,11 +451,31 @@ def payment_vendor(request, vendor_id):
 
 def payment_purchase_order(request,vendor_id, pk):
     purchase_orders = PurchaseOrder.objects.get(id=pk)
+    purchase_orders1 = PurchaseOrder.objects.all()
     current_po = PurchaseOrder.objects.get(id=pk).po_number
+    net_total = PurchaseOrder.objects.get(id=pk).net_amount
+    # pending_a = PurchaseOrder.objects.get(id=pk).net_amount
+    
+    payment_no = 101 if Payment.objects.count() == 0 else Payment.objects.aggregate(max=Max('payment_no'))["max"] + 1
+    if request.method == "POST":
+        # total = request.POST.get('total')
+        pending = request.POST.get('pending')
+        paid_amt = request.POST.get('paid')
+        # pending_amt = int(pending_a) - int(paid_amt)
+        
+        # Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
+                
+        
+        
+        
+    
+    
       
     context = {
         "purchase_orders" : purchase_orders,
         "current_po" : current_po,
+        "net_total" : net_total,
+        # "pending" : pending
     }
     return render(request, 'payment/payment_purchase_order.html',context)   
 

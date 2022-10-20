@@ -6,9 +6,29 @@
 {% include 'partial/topnav_staff.html'%}
 <div class="mx-5">
     <div class="row my-4">
-        <div class="col-md-8">    
+        <div class="col-md-5">
+            <table>
+                <form method="POST">
+                    {% csrf_token %}
+                    <tr>
+                        <td><label>Total Amount:</label></td>
+                        <td><input type="text" name="total" value="{{net_total}}" readonly /></td>
+                    </tr>
+                    <tr>
+                        <td><label>Pending</label></td>
+                        <td><input type="text" name="pending" value="{{net_total}}" readonly /></td>
+                    </tr>
+                    <tr>
+                        <td><label>Enter Amount</label></td>
+                        <td><input type="text" name="paid" /></td>
+                    </tr>
+                    <tr>
+                        <td><input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm"></td>
+                    </tr>   
+                </form>
+            </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-7">
             <div class="text-right">
                 <h5>PurchaseOrder:<span class="badge badge-pill badge-primary">{{current_po}}</span></h5>
             </div>

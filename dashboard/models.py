@@ -86,8 +86,10 @@ class PurchasedItems(models.Model):
         return self.item_id.name
             
 class Payment(models.Model):
+    date = models.DateTimeField(auto_now_add=True,null=True)
     payment_no = models.IntegerField(null=True)
     payment_id = models.CharField(max_length=100, null=True, unique=True)
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
     paid = models.PositiveIntegerField(null=True)
-    pending = models.PositiveIntegerField(null=True)
+    total = models.PositiveIntegerField(null=True)
+    pending = models.PositiveIntegerField(null=True,default=0)
