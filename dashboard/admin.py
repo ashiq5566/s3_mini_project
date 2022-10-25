@@ -13,7 +13,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ('item_id','name','unit_price','qty_purchased','qty_sold','status')
 
 class PurchaseOrderAdmin(admin.ModelAdmin):
-    list_display = ('date','po_number','vendor_id','gross_amount','discount','net_amount')
+    list_display = ('date','po_number','vendor_id','gross_amount','discount','net_amount','status')
     
     # def NET(self):
     #     return self.gross_amount - self.discount

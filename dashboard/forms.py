@@ -90,16 +90,15 @@ class PurchasedItemForm(forms.ModelForm):
 
     class Meta:
         model = PurchasedItems
-        fields = ['item_id', 'quantity','unit_price']
+        fields = ['item_name', 'quantity','unit_price']
         
-        ch = list(Item.objects.all().values('item_id'))
+        ch = list(Item.objects.all().values('name'))
         widgets = {
-            "item_id": forms.Select(
+            "item_name": forms.Select(
                 choices=ch,
                 attrs={
                     "required": True,
                 }
-            
             ),
             
         }

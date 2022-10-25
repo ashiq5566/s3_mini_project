@@ -264,6 +264,7 @@ def purchase_add(request, po_number):
     purchased_items = PurchasedItems.objects.all()
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
     purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
+    
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
@@ -273,18 +274,18 @@ def purchase_add(request, po_number):
     
     if request.method == "POST":  
         form = PurchasedItemForm(request.POST)
-        i_id=request.POST['item_id']
-        current_item_id = items.values('item_id').filter(id=i_id)[0]['item_id']
+        i_name=request.POST['item_name']
+        current_item_id = items.values('item_id').filter(id=i_name)[0]['item_id']
         qty=int(request.POST['quantity'])
         uprice=int(request.POST['unit_price'])
         g_amount = request.POST.get('g_amount')
-        record = Item.objects.get(id=i_id)
-        print("sdsd", i_id)
+        record = Item.objects.get(id=i_name)    
+        print("sdsd", i_name)
         record.qty_purchased = record.qty_purchased + qty 
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
-            PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_id=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
+            PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_name=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
             record.save()
             return redirect('purchase_add', po_number)
         
@@ -326,6 +327,7 @@ def purchase_add_confirm(request ,po_number):
         record.discount = d
         net = int(g) - int(d)
         record.net_amount = net
+        record.net_pending = net
         record.save()
         return redirect('purchase')
     
@@ -451,37 +453,39 @@ def payment_vendor(request, vendor_id):
 
 
 def payment_purchase_order(request,vendor_id, pk):
-    payments = Payment.objects.all()
     purchase_orders = PurchaseOrder.objects.get(id=pk)
     purchase_orders1 = PurchaseOrder.objects.all()
     current_po = PurchaseOrder.objects.get(id=pk).po_number
     current_ve = PurchaseOrder.objects.get(id=pk).vendor_id
     current_id = PurchaseOrder.objects.get(id=pk).id
     net_total = PurchaseOrder.objects.get(id=pk).net_amount
+    pending_amt = PurchaseOrder.objects.get(po_number=current_po).net_pending
+    status = PurchaseOrder.objects.get(po_number=current_po).status
     
     payment_no = 101 if Payment.objects.count() == 0 else Payment.objects.aggregate(max=Max('payment_no'))["max"] + 1
     
     pending = PurchaseOrder.objects.get(id=pk).net_amount
     if request.method == "POST":
-        # total = request.POST.get('total')
-        # pending_a = request.POST.get('pend')
         paid_amt = request.POST.get('paid')
-        # pending = int(net_total) - int(paid_amt)
-        # pending_amount = PurchaseOrder.objects.get(po_number=current_po).net_pending
         Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
-        pending = PurchaseOrder.objects.get(id=pk).net_amount
         for each in Payment.objects.filter(po_number__id=pk):
                 pending -= each.paid
         record = PurchaseOrder.objects.get(po_number=current_po)
         record.net_pending = pending
         record.save()
         return redirect('payment_purchase_order',current_ve,current_id)
+    payments = Payment.objects.filter(po_number_id=current_id)
+    if pending_amt == 0:
+        stat = PurchaseOrder.objects.get(po_number=current_po)
+        stat.status = True
+        stat.save()
         
     context = {
         "purchase_orders" : purchase_orders,
         "current_po" : current_po,
         "net_total" : net_total,
-        # "pending" : pending
+        # "pending" : pending,
+        "payments" : payments
     }
     return render(request, 'payment/payment_purchase_order.html',context)   
 

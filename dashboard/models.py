@@ -1,4 +1,5 @@
 from email.policy import default
+from enum import unique
 from pyexpat import model
 import uuid
 from django.db import models
@@ -19,7 +20,7 @@ class MyUUIDModel(models.Model):
 class Item(models.Model):
         item_no = models.IntegerField(null=True)
         item_id = models.CharField(max_length=10,null=True)
-        name = models.CharField(max_length=100, null=True, blank=False)
+        name = models.CharField(max_length=100, null=True, blank=False,unique=True)
         unit_price = models.PositiveBigIntegerField(null=True,blank=True)
         qty_available = models.PositiveIntegerField(null=True, default=0)
         qty_sold = models.PositiveIntegerField(null=True, default=0)
@@ -27,7 +28,7 @@ class Item(models.Model):
         status = models.BooleanField(default=False)
         
         def __str__(self):
-            return self.item_id
+            return  self.name
      
     
 class Customer(models.Model):
@@ -56,6 +57,7 @@ class PurchaseOrder(models.Model):
     discount = models.PositiveIntegerField(null=True)
     net_amount = models.PositiveIntegerField(null=True)
     net_pending = models.PositiveIntegerField(null=True,default=0)
+    status = models.BooleanField(default=False,null=True)
     
     def __str__(self):
             return self.po_number
@@ -67,8 +69,8 @@ class PurchaseOrder(models.Model):
 class PurchasedItems(models.Model):
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
-    item_id = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
-    item_name = models.CharField(max_length=100, null=True)
+    item_id = models.CharField(max_length = 20,null=True)
+    item_name = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
     quantity = models.PositiveIntegerField(null=True, default=0)
     unit_price = models.PositiveIntegerField(null=True, default=0)
     total_amt = models.PositiveIntegerField(null=True)
@@ -83,8 +85,8 @@ class PurchasedItems(models.Model):
     
     
     @property
-    def item_name(self):
-        return self.item_id.name
+    def item_id(self):
+        return self.item_name.item_id
             
 class Payment(models.Model):
     date = models.DateTimeField(auto_now_add=True,null=True)
