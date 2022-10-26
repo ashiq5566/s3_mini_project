@@ -123,6 +123,7 @@
                         <th scope="col">qty_purchased</th>
                         <th scope="col">QTY_Sold</th>
                         <th scope="col">Status</th>
+						<th scope="col"></th>
                       </tr>
                     </thead>
                   </table>
@@ -142,6 +143,7 @@
                           {% else %}
                           <td>Not Available</td>
                           {% endif %}
+						  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'stock_update' item.id %}">Edit</a></td>
                           {% comment %} <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewVe-{{ vendor.id}}">View</a></td> {% endcomment %}
                           {% comment %} <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td> {% endcomment %}
                         </tr>

@@ -106,12 +106,12 @@ class PurchasedItemForm(forms.ModelForm):
 class PurchaseOrderForm(forms.ModelForm):
     class Meta:
         model = PurchaseOrder
-        fields = ['vendor_id']
+        fields = ['vendor_name']
         
-        ch1 = list(Vendor.objects.all().values('vendor_id'))
+        ch1 = list(Vendor.objects.all().values('vendor_name'))
         widgets = {
            
-            "vendor_id": forms.Select(
+            "vendor_name": forms.Select(
                 choices=ch1,
                 attrs={
                     "required": True,

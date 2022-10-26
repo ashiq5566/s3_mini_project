@@ -1,0 +1,17 @@
+{% extends 'partial/base.html' %}
+{% block title %} STOCK UPDATE PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="mx-5 py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-md-4">
+            <form method="post">
+                {% csrf_token %}
+                {{form|crispy}}     
+                <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Update">  
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

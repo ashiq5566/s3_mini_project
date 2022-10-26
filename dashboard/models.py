@@ -46,13 +46,13 @@ class Vendor(models.Model):
     vendor_mobile = models.CharField(max_length=15,null=True)
     
     def __str__(self):
-            return self.vendor_id
+            return self.vendor_name
 
 class PurchaseOrder(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     po_no = models.IntegerField(null=True)
     po_number = models.CharField(max_length=100, null=True, unique=True)
-    vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
+    vendor_name = models.ForeignKey(Vendor, on_delete=models.CASCADE,null=True)
     gross_amount = models.PositiveIntegerField(null=True)
     discount = models.PositiveIntegerField(null=True)
     net_amount = models.PositiveIntegerField(null=True)

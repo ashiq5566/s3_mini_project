@@ -192,6 +192,17 @@ def stock(request):
         'form' : form,
     }
     return render(request, 'dashboard/stock.html',context)
+def stock_update(request, pk):
+    items = Item.objects.get(id=pk)
+    form = ItemForm(request.POST or None, instance = items)
+    if form.is_valid():
+            form.save()
+            return redirect("stock")
+    
+    context = {
+        'form' : form
+    }
+    return render(request, 'dashboard/stock_update.html',context)
 
 @login_required
 def purchase(request):
@@ -200,14 +211,14 @@ def purchase(request):
     po_n = 101 if PurchaseOrder.objects.count() == 0 else PurchaseOrder.objects.aggregate(max=Max('po_no'))["max"] + 1
     if request.method == 'POST':
         # g_amount = request.POST.get('gross_amount')
-        # dis = request.POST.get('discount')
+        # dis = request.POST.get('discount')    
         form = PurchaseOrderForm(request.POST)
-        ven = request.POST.get('vendor_id')
+        ven = request.POST.get('vendor_name')
         ven1 = vendors.get(id=ven)
         # ven1 = purchase_orders.get(id=ven)
         if form.is_valid():
             # form.save()
-            PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_id=ven1).save()
+            PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_name=ven1).save()
             po = (f'{"PO"}{po_n}')
             # ven2 = purchase_orders.get(po_number=po)
             ven2 = purchase_orders.values('po_number').filter(po_number=po)[0]['po_number']
@@ -227,8 +238,9 @@ def purchase_view(request, pk):
     purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_number)
     current_purchase_orderid = PurchaseOrder.objects.get(id=pk).id
     current_po = PurchaseOrder.objects.get(id=current_po_number).po_number
-    current_vendor = PurchaseOrder.objects.get(id=current_po_number).vendor_id
-    current_vendor_name = Vendor.objects.get(vendor_id=current_vendor).vendor_name
+    current_vendor = PurchaseOrder.objects.get(id=current_po_number).vendor_name
+    current_vendor_name = Vendor.objects.get(vendor_name=current_vendor).vendor_name
+    current_vendor_id = Vendor.objects.get(vendor_name=current_vendor).vendor_id
     po_date = PurchaseOrder.objects.get(id=current_po_number).date
     discount = PurchaseOrder.objects.get(id=current_po_number).discount
     net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
@@ -247,7 +259,8 @@ def purchase_view(request, pk):
         'current_po' : current_po,
         'current_vendor' : current_vendor,
         'po_date' : po_date,
-        'current_vendor_name' : current_vendor_name
+        'current_vendor_name' : current_vendor_name,
+        'current_vendor_id' : current_vendor_id
     }
     return render(request, 'purchase/purchase_view.html',context)
 
@@ -258,7 +271,7 @@ def purchase_add(request, po_number):
     items = Item.objects.all()
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
-    current_vendor_id = purchase_orders.values('vendor_id').filter(po_number=po_number)[0]['vendor_id']
+    current_vendor_id = purchase_orders.values('vendor_name').filter(po_number=po_number)[0]['vendor_name']
     current_vendor_id1 = vendors.values('vendor_id').filter(id=current_vendor_id)[0]['vendor_id']
     purchase_orders = PurchaseOrder.objects.all()
     purchased_items = PurchasedItems.objects.all()
@@ -381,7 +394,7 @@ def report_pdf(request, pk):
     current_po_id = purchase_orders1.values('id').filter(id=pk)[0]['id']
     purchase_order_views = PurchasedItems.objects.filter(po_number_id=current_po_id)
     current_po_no = PurchaseOrder.objects.get(id=current_po_id).po_number
-    current_vendor_id = PurchaseOrder.objects.get(id=current_po_id).vendor_id
+    current_vendor_id = PurchaseOrder.objects.get(id=current_po_id).vendor_name
     print_date = PurchaseOrder.objects.get(id=current_po_id).date
     discount = PurchaseOrder.objects.get(id=current_po_id).discount
     net_amt = PurchaseOrder.objects.get(id=current_po_id).net_amount
@@ -441,7 +454,7 @@ def payment_vendor(request, vendor_id):
     vid = Vendor.objects.get(vendor_id=vendor_id).id
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
-    purchase_orders = PurchaseOrder.objects.filter(vendor_id_id =vid)
+    purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid)
     # po_id = PurchaseOrder.objects.get()
     
     context = {
@@ -456,7 +469,7 @@ def payment_purchase_order(request,vendor_id, pk):
     purchase_orders = PurchaseOrder.objects.get(id=pk)
     purchase_orders1 = PurchaseOrder.objects.all()
     current_po = PurchaseOrder.objects.get(id=pk).po_number
-    current_ve = PurchaseOrder.objects.get(id=pk).vendor_id
+    current_ve = PurchaseOrder.objects.get(id=pk).vendor_name
     current_id = PurchaseOrder.objects.get(id=pk).id
     net_total = PurchaseOrder.objects.get(id=pk).net_amount
     pending_amt = PurchaseOrder.objects.get(po_number=current_po).net_pending
@@ -498,41 +511,6 @@ def demo(request):
         MyUUIDModel(username=username,regnumber=regno,regnumber1=(f'{"V00"}{regno}')).save()
         
     return render(request, 'dashboard/uuid.html')
-# @login_required
-# def product(request): 
-    # items = Product.objects.all()
-    # workers = User.objects.exclude(username='admin')
-    # product_count = items.count()
-    # order_count = Order.objects.all().count()
-    # # items = Product.objects.raw('SELECT * FROM dashboard_product')
-    # workers_count = workers.count()
-
-    # if 'q' in request.GET:
-    #     q = request.GET['q']
-    #     items = Product.objects.filter(Q(name__icontains=q) | Q(category__icontains=q))
-    # else:
-    #     items = Product.objects.all()
-
-    # # workers_count = workers.count()
-    # if request.method == 'POST':
-    #     form = ProductForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         product_name = form.cleaned_data.get('name')
-    #         messages.success(request, f'{product_name} has been added')
-    #         redirect('dashboard/product')
-    # else:
-    #     form = ProductForm()
-    # context = {
-    #     'items': items,
-    #     'form': form,
-    #     'product_count' : product_count,
-    #     'workers_count' : workers_count,
-    #     'order_count' : order_count,
-
-    # }
-    return render(request, 'dashboard/product.html')
-
 @login_required
 def product_delete(request, pk):
     # items = Product.objects.get(id=pk)
@@ -556,52 +534,7 @@ def product_edit(request, pk):
     # }
     return render(request, 'dashboard/product_edit.html')
 
-# @login_required
-# def product_add(request):
 
-
-# @login_required
-# def order(request):
-#     customers = User.objects.all()
-#     workers = User.objects.exclude(username='admin')
-#     orders = Order.objects.all()
-#     order_count = orders.count()
-#     workers_count = workers.count()
-#     product_count = Product.objects.all().count()
-#     if 'q' in request.GET:
-#         q = request.GET['q']
-        # orders = Order.objects.get(Q(staff__icontains=q))
-    # else:
-    #     orders = Order.objects.all()
-
-
-    # context = {
-    #     'orders' : orders,
-    #     'workers_count' : workers_count,
-    #     'order_count' : order_count,
-    #     'product_count' : product_count,
-    #     'customers'  : customers,
-
-    # }
-    # return render(request, 'dashboard/order.html' ,context)
-
-# @login_required
-# def order_delete(request, pk):
-#     items = Order.objects.get(id=pk)
-#     if request.method == 'POST':
-#         items.delete()
-#         return redirect('dashboard-order')
-
-#     return render(request, 'dashboard/order_delete.html' )
-
-# @login_required
-# def staff_order_delete(request, pk):
-#     items = Order.objects.get(id=pk)
-#     if request.method == 'POST':
-#         items.delete()
-        # return redirect('dashboard-index')
-
-    # return render(request, 'dashboard/staff_order_delete.html' )
 
 
 
