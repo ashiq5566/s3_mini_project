@@ -25,5 +25,11 @@ urlpatterns = [
     path('payment/<vendor_id>',views.payment_vendor,name='payment_vendor'),
     path('payment/<vendor_id>/<int:pk>',views.payment_purchase_order,name='payment_purchase_order'),
     path('demo/',views.demo,name='demo'),
+    # path('sales/',views.sales,name='sales'),
+    # path('sales/view/<int:pk>',views.sales_view,name='sales_view'),
+    # path('sales/view/<int:pk>/pdf',views.report_pdf,name='report_pdf'),
+    # path('sales/add/<po_number>',views.sales_add,name='sales_add'),
+    # path('sales/add/<po_number>/confirm',views.sales_add_confirm,name='sales_add_confirm'),
+    # path('sales/add/<po_number>/soldditem_delete/<int:id>',views.soldditem_delete,name='soldditem_delete'),
 ]
 
