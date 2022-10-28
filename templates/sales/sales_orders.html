@@ -1,5 +1,5 @@
 {% extends 'partial/base.html' %}
-{% block title %} PURCHASE PAGE {% endblock %}
+{% block title %} SALES PAGE {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -25,8 +25,8 @@
                   <thead>
                     <tr>
                       <th scope="col">Date</th>
-                      <th scope="col">PO_NO</th>
-                      <th scope="col">Vendor_name</th>
+                      <th scope="col">SO_number</th>
+                      <th scope="col">Customer_name</th>
                       <th scope="col">Gross_amount</th>
                       <th scope="col">Discount</th>
                       <th scope="col">Net_Amount</th>
@@ -38,15 +38,15 @@
               <div class="tbl-content">
                 <table cellpadding="0" cellspacing="0" border="0">
                   <tbody>
-                    {% for purchase_order in purchase_orders %}
+                    {% for sales_order in sales_orders %}
                       <tr>
-                        <td>{{ purchase_order.date }}</td>
-                        <td>{{ purchase_order.po_number }}</td>
-                        <td>{{ purchase_order.vendor_name }}</td>
-                        <td>{{ purchase_order.gross_amount }}</td>
-                        <td>{{ purchase_order.discount }}</td>
-                        <td>{{ purchase_order.net_amount }}</td>
-                        <td><a href="{% url 'purchase_view' purchase_order.id %}">View</a></td>
+                        <td>{{ sales_order.date }}</td>
+                        <td>{{ sales_order.so_number }}</td>
+                        <td>{{ sales_order.customer_name }}</td>
+                        <td>{{ sales_order.gross_amount }}</td>
+                        <td>{{ sales_order.discount }}</td>
+                        <td>{{ sales_order.net_amount }}</td>
+                        <td><a href="{% url 'sales_view' sales_order.id %}">View</a></td>
                       </tr>
                     {% endfor %}
                   </tbody>

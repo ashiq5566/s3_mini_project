@@ -37,6 +37,9 @@ class Customer(models.Model):
     customer_name = models.CharField(max_length=100,null=True)
     customer_address = models.CharField(max_length=200,null=True)
     customer_mobile = models.CharField(max_length=15,null=True)
+    
+    def __str__(self):
+            return self.customer_name
 
 class Vendor(models.Model):
     vendor_no = models.IntegerField(null=True)
@@ -79,6 +82,43 @@ class PurchasedItems(models.Model):
     def save(self, *args, **kwargs):
         self.total_amt = int(self.quantity) * int(self.unit_price)
         super(PurchasedItems, self).save(*args, **kwargs) 
+    # def save(self):
+    #     total_amt = self.quantity * self.unit_price
+    #     return total_amt
+    
+    
+    @property
+    def item_id(self):
+        return self.item_name.item_id
+    
+class SalesOrder(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    so_no = models.IntegerField(null=True)
+    so_number = models.CharField(max_length=100, null=True, unique=True)
+    customer_name = models.ForeignKey(Customer, on_delete=models.CASCADE,null=True)
+    gross_amount = models.PositiveIntegerField(null=True)
+    discount = models.PositiveIntegerField(null=True)
+    net_amount = models.PositiveIntegerField(null=True)
+    net_pending = models.PositiveIntegerField(null=True,default=0)
+    status = models.BooleanField(default=False,null=True)
+    
+    def __str__(self):
+            return self.so_number
+        
+
+class SoldItems(models.Model):
+    so_number = models.ForeignKey(SalesOrder, on_delete=models.CASCADE,null=True)
+    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE,null=True)
+    item_id = models.CharField(max_length = 20,null=True)
+    item_name = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
+    quantity = models.PositiveIntegerField(null=True, default=0)
+    unit_price = models.PositiveIntegerField(null=True, default=0)
+    total_amt = models.PositiveIntegerField(null=True)
+
+        
+    def save(self, *args, **kwargs):
+        self.total_amt = int(self.quantity) * int(self.unit_price)
+        super(SoldItems, self).save(*args, **kwargs) 
     # def save(self):
     #     total_amt = self.quantity * self.unit_price
     #     return total_amt

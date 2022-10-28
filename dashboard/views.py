@@ -4,9 +4,9 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .models import Customer, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment
+from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems
 from django.contrib.auth.models import User
-from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm
 from django.contrib import messages
 from django.db.models import Q, Max, F, Sum
 
@@ -264,7 +264,6 @@ def purchase_view(request, pk):
     }
     return render(request, 'purchase/purchase_view.html',context)
 
-
 @login_required
 def purchase_add(request, po_number):
     vendors = Vendor.objects.all()
@@ -501,6 +500,169 @@ def payment_purchase_order(request,vendor_id, pk):
         "payments" : payments
     }
     return render(request, 'payment/payment_purchase_order.html',context)   
+
+
+@login_required
+def sales(request):
+    customers = Customer.objects.all()
+    sales_orders = SalesOrder.objects.all()
+    so_n = 101 if SalesOrder.objects.count() == 0 else SalesOrder.objects.aggregate(max=Max('so_no'))["max"] + 1
+    if request.method == 'POST':  
+        form = SalesOrderForm(request.POST)
+        cus = request.POST.get('customer_name')
+        cus1 = customers.get(id=cus)
+        if form.is_valid():
+            SalesOrder(so_no=so_n,so_number=(f'{"SO"}{so_n}'),customer_name=cus1).save()
+            po = (f'{"SO"}{so_n}')
+            cus2 = sales_orders.values('so_number').filter(so_number=po)[0]['so_number']
+            return redirect("sales_add" ,cus2)
+    else:
+        form = SalesOrderForm
+    context = {
+        'sales_orders' : sales_orders,
+        'form' : form,
+    }
+    return render(request, 'sales/sales_orders.html',context)
+
+@login_required
+def sales_add(request, so_number):
+    customers = Customer.objects.all()
+    items = Item.objects.all()
+    sales_orders = SalesOrder.objects.all()
+    current_so_number = sales_orders.values('so_number').filter(so_number=so_number)[0]['so_number']
+    current_customer_id = sales_orders.values('customer_name').filter(so_number=so_number)[0]['customer_name']
+    current_customer_id1 = customers.values('customer_id').filter(id=current_customer_id)[0]['customer_id']
+    sales_orders = SalesOrder.objects.all()
+    sold_items = SoldItems.objects.all()
+    current_so_number_view = sales_orders.values('id').filter(so_number=so_number)[0]['id']
+    sales_order_individals = SoldItems.objects.filter(so_number_id=current_so_number_view)
+    
+    total_amt = 0
+    _id = SalesOrder.objects.get(so_number=so_number).id
+    for each in SoldItems.objects.filter(so_number__id=_id):
+        total_amt += each.total_amt
+    # print("TOTAL:", total_amt) 
+    # print("LOGGGG:", _id)  
+    
+    if request.method == "POST":  
+        form = SoldItemForm(request.POST)
+        i_name=request.POST['item_name']
+        current_item_id = items.values('item_id').filter(id=i_name)[0]['item_id']
+        qty=int(request.POST['quantity'])
+        uprice=int(request.POST['unit_price'])
+        g_amount = request.POST.get('g_amount')
+        record = Item.objects.get(id=i_name)    
+        print("sdsd", i_name)
+        record.qty_sold = record.qty_sold + qty 
+        if form.is_valid():
+            # form.save()
+            # return redirect('purchase_add', so_number)
+            SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
+            record.save()
+            return redirect('sales_add', so_number)
+        
+    else:
+        form = SoldItemForm
+    
+
+    context = { 
+        'customers': customers,
+        'items' : items,
+        'sold_items' : sold_items,
+        'form' : form,
+        'sales_orders':sales_orders,
+        'current_so_number' : current_so_number,
+        'current_customer_id1':current_customer_id1,
+        'sales_order_individals':sales_order_individals,
+        'total_amt':  total_amt,
+        # 'each_total_amount':each_total_amount
+    } 
+    return render(request, 'sales/sales_add.html',context)
+
+@login_required
+def sales_add_confirm(request ,so_number):
+    # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
+    sales_orders = SalesOrder.objects.all()
+    current_so_number = sales_orders.values('so_number').filter(so_number=so_number)[0]['so_number']
+    current_so_number_view = sales_orders.values('id').filter(so_number=so_number)[0]['id']
+    sales_order_individals = SoldItems.objects.filter(so_number_id=current_so_number_view)
+    
+    total_amt = 0
+    _id = SalesOrder.objects.get(so_number=so_number).id
+    for each in SoldItems.objects.filter(so_number__id=_id):
+        total_amt += each.total_amt
+    if request.method == "POST":
+        g = request.POST.get('g_amount')
+        d = request.POST.get('discount')
+        record = SalesOrder.objects.get(so_number=current_so_number)
+        record.gross_amount = g
+        record.discount = d
+        net = int(g) - int(d)
+        record.net_amount = net
+        record.net_pending = net
+        record.save()
+        return redirect('sales')
+    
+    context = {
+        'total_amt' : total_amt,
+        'sales_order_individals':sales_order_individals,
+        'current_so_number' : current_so_number
+        
+    }
+    return render(request, 'sales/sales_confirm.html',context)
+
+@login_required
+def solditem_delete(request, id, so_number):
+    items = Item.objects.all()
+    sales_items = SoldItems.objects.get(pk=id)
+    record = SoldItems.objects.get(pk=id).item_id
+    qty = SoldItems.objects.get(pk=id).quantity
+    stock = Item.objects.get(item_id=record)
+    print("gello", qty)
+    if request.method == 'POST':
+        sales_items.delete()
+        stock.qty_sold = stock.qty_sold - qty
+        stock.save()
+        
+        return redirect('sales_add',so_number)
+    context = {
+        'sales_items' : sales_items,
+    }
+    return render(request, 'sales/solditem_delete.html',context)
+
+@login_required
+def sales_view(request, pk):
+    sales_orders = SalesOrder.objects.get(id=pk)
+    sales_orders1 = SalesOrder.objects.all()
+    current_so_number = sales_orders1.values('id').filter(id=pk)[0]['id']
+    sales_order_views = SoldItems.objects.filter(so_number_id=current_so_number)
+    current_sales_orderid = SalesOrder.objects.get(id=pk).id
+    current_so = SalesOrder.objects.get(id=current_so_number).so_number
+    current_customer = SalesOrder.objects.get(id=current_so_number).customer_name
+    current_customer_name = Customer.objects.get(customer_name=current_customer).customer_name
+    current_customer_id = Customer.objects.get(customer_name=current_customer).customer_id
+    so_date = SalesOrder.objects.get(id=current_so_number).date
+    discount = SalesOrder.objects.get(id=current_so_number).discount
+    net_amt = SalesOrder.objects.get(id=current_so_number).net_amount
+    
+    total_amt = 0
+    _id = SalesOrder.objects.get(id=pk).id
+    for each in SoldItems.objects.filter(so_number__id=_id):
+        total_amt += each.total_amt
+    context = {
+        'sales_orders' : sales_orders,
+        'sales_order_views' : sales_order_views,
+        'total_amt' : total_amt,
+        'discount' : discount,
+        'net_amt' : net_amt,
+        'current_sales_orderid' : current_sales_orderid,
+        'current_so' : current_so,
+        'current_customer' : current_customer,
+        'so_date' : so_date,
+        'current_customer_name' : current_customer_name,
+        'current_customer_id' : current_customer_id
+    }
+    return render(request, 'sales/sales_view.html',context)
 
 @login_required
 def demo(request):

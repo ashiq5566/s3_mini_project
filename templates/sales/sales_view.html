@@ -1,61 +1,8 @@
 {% extends 'partial/base.html' %}
-{% block title %} PURCHASE PAGE {% endblock %}
+{% block title %} SALES PAGE {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% comment %} {% include 'partial/topnav_staff.html'%} {% endcomment %}
-
-{% comment %} <div class="mx-5">
-	<div class="row my-4">
-        <div class="col-md-4">
-			
-		</div>
-		<div class="col-md-8">
-      <div class="text-right">
-        <h4>Purchase Order:<span class="badge badge-pill badge-primary">{{current_po}}</span></h4>
-        <h4>Vendor:<span class="badge badge-pill badge-primary">{{current_vendor}}</span></h4>
-      </div>
-			<div class="tbl-header">
-				<table cellpadding="0" cellspacing="0" border="0">
-				  <thead>
-					<tr>
-					  <th scope="col">ItemID</th>
-					  <th scope="col">Name</th>
-					  <th scope="col">Qty</th>
-					  <th scope="col">Unit_Price</th>
-					  <th scope="col">Total</th>	
-					</tr>
-				  </thead>
-				</table>
-			  </div>
-			  <div class="tbl-content">
-				<table cellpadding="0" cellspacing="0" border="0">
-				  <tbody>
-					{% for purchase_order_view in purchase_order_views %}
-					<tr>
-					  <td>{{ purchase_order_view.item_id }}</td>
-					  <td>{{ purchase_order_view.item_name }}</td>
-					  <td>{{ purchase_order_view.quantity }}</td>
-					  <td>{{ purchase_order_view.unit_price }}</td>
-					  <td>{{ purchase_order_view.total_amt }}</td> 
-					</tr>
-					{% endfor %}
-				  </tbody>
-				</table>
-				<div class="text-right">
-					<label>Gross Total</label>
-					<span>{{total_amt}}</span><br />
-					<label>Discount</label>
-					<span>{{discount}}</span><br />
-					<label>Net Amount</label>
-					<span>{{net_amt}}</span><br />
-			  </div>
-			  <div class="text-right">
-				<a class="btn btn-info text-right" href="{% url 'report_pdf'  current_purchase_orderid %}">Print<span class="sr-only">(current)</span></a>
-			</div>  
-		</div>
-	</div>
-</div> {% endcomment %}
 
 <style>
 	body{
@@ -179,10 +126,10 @@
 <div class="page-content container">
     <div class="page-header text-blue-d2">
         <h1 class="page-title text-secondary-d1">
-            PurchaseOrderNo:
+            SalesOrderNo:
             <small class="page-info">
                 <i class="fa fa-angle-double-right text-80"></i>
-                {{current_po}}
+                {{current_so}}
             </small>
         </h1>
 
@@ -239,9 +186,9 @@
                             <div class="mt-1 mb-2 text-secondary-m1 text-600 text-125">
                                 {% comment %} Invoice {% endcomment %}
                             </div>
-							<div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">VendorID:</span>{{current_vendor_id}}</div>
-                            <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">VendorName:</span>{{current_vendor_name}}</div>
-                            <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Issue Date:</span>{{po_date}}</div>
+							<div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">CustomerID:</span>{{current_customer_id}}</div>
+                            <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">CustomerName:</span>{{current_customer_name}}</div>
+                            <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Issue Date:</span>{{so_date}}</div>
 
                             {% comment %} <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="badge badge-warning badge-pill px-25">Unpaid</span></div> {% endcomment %}
                         </div>
@@ -264,13 +211,13 @@
 
                     <tbody class="text-95 text-secondary-d3">
                         <tr></tr>
-						{% for purchase_order_view in purchase_order_views %}
+						{% for sales_order_view in sales_order_views %}
                         <tr>
-                            <td>{{ purchase_order_view.item_id }}</td>
-                            <td>{{ purchase_order_view.item_name }}</td>
-                            <td>{{ purchase_order_view.quantity }}</td>
-                            <td class="text-95">{{ purchase_order_view.unit_price }}</td>
-                            <td class="text-secondary-d2">{{ purchase_order_view.total_amt }}</td>
+                            <td>{{ sales_order_view.item_id }}</td>
+                            <td>{{ sales_order_view.item_name }}</td>
+                            <td>{{ sales_order_view.quantity }}</td>
+                            <td class="text-95">{{ sales_order_view.unit_price }}</td>
+                            <td class="text-secondary-d2">{{ sales_order_view.total_amt }}</td>
                         </tr> 
 						{% endfor %}
                     </tbody>
@@ -316,7 +263,7 @@
 
                     <div>
                         <span class="text-secondary-d1 text-105">Thank you for your business</span>
-                        <a href="{% url 'report_pdf'  current_purchase_orderid %}" class="btn bg-white btn-light btn-bold px-4 float-right mt-3 mt-lg-0"><i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>Print</a>
+                        {% comment %} <a href="{% url 'report_pdf'  current_purchase_orderid %}" class="btn bg-white btn-light btn-bold px-4 float-right mt-3 mt-lg-0"><i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>Print</a> {% endcomment %}
                     </div>
                 </div>
             </div>

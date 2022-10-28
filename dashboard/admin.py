@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, Vendor, Item, MyUUIDModel,PurchasedItems, PurchaseOrder, Payment
+from .models import Customer, Vendor, Item, MyUUIDModel,PurchasedItems, PurchaseOrder, Payment, SalesOrder, SoldItems
 
 admin.site.site_header = "Inventory Management System"
 
@@ -14,15 +14,15 @@ class ItemAdmin(admin.ModelAdmin):
 
 class PurchaseOrderAdmin(admin.ModelAdmin):
     list_display = ('date','po_number','vendor_name','gross_amount','discount','net_amount','status')
-    
-    # def NET(self):
-    #     return self.gross_amount - self.discount
-
-    # net_amount = property(NET)
-    
-
+        
 class PurchasedItemsAdmin(admin.ModelAdmin):
     list_display = ('id','po_number','vendor_id','item_id','item_name','quantity','unit_price','total_amt')
+    
+class SalesOrderAdmin(admin.ModelAdmin):
+    list_display = ('date','so_number','customer_name','gross_amount','discount','net_amount','status')
+        
+class SoldItemsAdmin(admin.ModelAdmin):
+    list_display = ('id','so_number','customer_id','item_id','item_name','quantity','unit_price','total_amt')
     
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('payment_id','po_number','paid','pending','total')
@@ -41,6 +41,8 @@ admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchasedItems, PurchasedItemsAdmin)
+admin.site.register(SalesOrder, SalesOrderAdmin)
+admin.site.register(SoldItems, SoldItemsAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(MyUUIDModel, MyUUIDModelAdmin)
 
