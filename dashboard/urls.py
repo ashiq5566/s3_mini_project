@@ -24,6 +24,10 @@ urlpatterns = [
     path('payment/',views.payment,name='payment'),
     path('payment/<vendor_id>',views.payment_vendor,name='payment_vendor'),
     path('payment/<vendor_id>/<int:pk>',views.payment_purchase_order,name='payment_purchase_order'),
+    path('purchase/return',views.purchase_return,name='purchase_return'),
+    path('purchase/return/<po_number>',views.purchase_return_po,name='purchase_return_po'),
+    
+    
     path('demo/',views.demo,name='demo'),
     path('sales/',views.sales,name='sales'),
     path('sales/view/<int:pk>',views.sales_view,name='sales_view'),

@@ -4,9 +4,9 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems,PaymentSales
+from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems,PaymentSales, PurchaseReturn
 from django.contrib.auth.models import User
-from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm, SelectPOForm
 from django.contrib import messages
 from django.db.models import Q, Max, F, Sum
 
@@ -449,7 +449,55 @@ def payment(request):
         "form" : form
     }
     return render(request, 'payment/payment_add.html',context)  
+
+def purchase_return(request):
+    if request.method == "POST":
+        form = SelectPOForm(request.POST)
+        po = request.POST.get('PurchaseOrderID')
+        current_po = PurchaseOrder.objects.get(id=po)
+        print("gwgw" ,po)
+        return redirect('purchase_return_po',current_po)
+    else:
+        form = SelectPOForm()
+    context = {
+        'form' : form,
+    }
+        
+    return render(request, 'purchaseReturn/purchase_return.html',context)    
+
+
+def purchase_return_po(request,po_number):
+    items = Item.objects.all()
+    current_po = po_number
+    pn_id = PurchaseOrder.objects.get(po_number=po_number).id 
+    purchased_items = PurchasedItems.objects.filter(po_number_id = pn_id)
+    if request.method == "POST":
+        item_name = request.POST.get('i_name')
+        re_qty = request.POST.get('rq')
+        inm = Item.objects.get(name=item_name).id
+        unit_price = PurchasedItems.objects.get(po_number_id = pn_id , item_name=inm).unit_price
+        amt = int(re_qty) * int(unit_price)
+        PurchaseReturn(po_number=PurchaseOrder.objects.get(po_number=current_po),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
+        record = Item.objects.get(id=inm)
+        record.qty_purchased = int(record.qty_purchased) - int(re_qty)
+        record.save()
+        return redirect('purchase_return_po', current_po)
+        
     
+    purchase_returns = PurchaseReturn.objects.filter(po_number_id=pn_id)
+    
+        
+    
+    context = {
+        'purchased_items' : purchased_items,
+        'current_po' : current_po,
+        'purchase_returns' : purchase_returns
+    }
+        
+    return render(request, 'purchaseReturn/purchase_return_po.html',context) 
+
+
+@login_required
 def payment_vendor(request, vendor_id):
     vid = Vendor.objects.get(vendor_id=vendor_id).id
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
@@ -464,7 +512,7 @@ def payment_vendor(request, vendor_id):
     }
     return render(request, 'payment/payment_vendor.html',context)     
 
-
+@login_required
 def payment_purchase_order(request,vendor_id, pk):
     purchase_orders = PurchaseOrder.objects.get(id=pk)
     purchase_orders1 = PurchaseOrder.objects.all()
@@ -784,8 +832,6 @@ def payment_sales_order(request,customer_id, pk):
         "sales_payments" : sales_payments
     }
     return render(request, 'payment_sales/payment_sales_order.html',context)   
-
-
 
 @login_required
 def demo(request):

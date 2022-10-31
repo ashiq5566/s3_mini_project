@@ -165,3 +165,6 @@ class SelectVendorForm(forms.Form):
 
 class SelectCustomerForm(forms.Form):
     customer_id = forms.ModelChoiceField(queryset=Customer.objects.all())
+
+class SelectPOForm(forms.Form):
+    PurchaseOrderID = forms.ModelChoiceField(queryset=PurchaseOrder.objects.all())

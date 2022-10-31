@@ -142,3 +142,11 @@ class PaymentSales(models.Model):
     paid = models.PositiveIntegerField(null=True,default=0)
     total = models.PositiveIntegerField(null=True)
     pending = models.PositiveIntegerField(null=True,default=0)
+    
+class PurchaseReturn(models.Model):
+    date = models.DateTimeField(auto_now_add=True,null=True)
+    po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
+    item_name = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
+    return_qty = models.PositiveIntegerField(null=True,default=0)
+    amount = models.PositiveIntegerField(null=True)
+
