@@ -1,0 +1,42 @@
+<div class="container text-right">
+    <h1 style="font-weight:bold;">KC STEELS</h1>
+    <hr>
+    <div>
+        <h2 >Date:{{print_date}}</h2>
+        <h2>SalesOrderNo:{{current_so_no}}</h2>
+        <h2 >CustomerName:{{current_customer_id}}</h2>
+    </div>
+    <div>
+        <table style="margin-bottom:20px;" cellpadding="3" cellspacing="3" border="1">
+            <thead>
+              <tr>
+                <td style="font-weight:bold; font-size:14px;" scope="col">ItemID</td>
+                <td style="font-weight:bold; font-size:14px;" scope="col">Name</td>
+                <td style="font-weight:bold; font-size:14px;" scope="col">Qty</td>
+                <td style="font-weight:bold; font-size:14px;" scope="col">Unit_Price</td>
+                <td style="font-weight:bold; font-size:14px;" scope="col">Total</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sales_order_view in sales_order_views %}
+              <tr>
+                <td scope="row">{{ sales_order_view.item_id }}</td>
+                <td>{{ sales_order_view.item_name }}</td>
+                <td>{{ sales_order_view.quantity }}</td>
+                <td>{{ sales_order_view.unit_price }}</td>
+                <td>{{ sales_order_view.total_amt }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <div>
+            <label style="font-size:16px;margin-left:50px;">Gross Total:</label>
+            <span style="font-size:16px;">{{total_amt}}</span><br /><br />
+            <label style="font-size:16px;">Discount:</label>
+            <span style="font-size:16px;">{{discount}}</span><br /><br />
+            <label style="font-size:16px;">Net Amount:</label>
+            <span style="font-size:16px;">{{net_amt}}</span><br />
+        </div>
+    </div>
+</div>

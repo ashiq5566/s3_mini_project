@@ -9,10 +9,10 @@
 					</div>
 					<div class="card-body">
 						<div class="row">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<a class="text-decoration-none text-dark" href="{% url 'stock' %}">
 									<div class="card my-card shadow text-center p-3">
-										<h4>STOCK <i style="color:#007bff;" class="fa fa-line-chart"></i></h4>
+										<h6>STOCK <i style="color:#007bff;" class="fa fa-line-chart"></i></h6>
 										<h3></h3>
 									</div>
 								</a>
@@ -20,7 +20,7 @@
 							<div class="col-md-2">
 								<a class="text-decoration-none text-dark" href="{% url 'purchase' %}">
 									<div class="card my-card shadow text-center p-3">
-										<h4>PURCHASE <i style="color:#007bff;" class="fa fa-shopping-cart"></i></h4>
+										<h6>PURCHASE <i style="color:#007bff;" class="fa fa-shopping-cart"></i></h6>
 										<h3></h3>
 									</div>
 								</a>
@@ -28,7 +28,7 @@
 							<div class="col-md-2">
 								<a class="text-decoration-none text-dark" href="{% url 'sales' %}">
 									<div class="card my-card shadow text-center p-3">
-										<h4>SALES <i style="color:#007bff;" class="fa fa-shopping-cart"></i></h4>
+										<h6>SALES <i style="color:#007bff;" class="fa fa-shopping-cart"></i></h6>
 										<h3></h3>
 									</div>
 								</a>
@@ -36,15 +36,23 @@
 							<div class="col-md-2">
 								<a class="text-decoration-none text-dark" href="{% url 'payment' %}">
 									<div class="card my-card shadow text-center p-3">
-										<h4>PAYMENTS <i style="color:#007bff;" class="fa fa-credit-card-alt"></i></h4>
+										<h6>PAYMENTS(PURCHASE) <i style="color:#007bff;" class="fa fa-credit-card-alt"></i></h6>
 										<h3></h3>
 									</div>
 								</a>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
+								<a class="text-decoration-none text-dark" href="">
+									<div class="card my-card shadow text-center p-3">
+										<h6>PAYMENTS(SALES) <i style="color:#007bff;" class="fa fa-credit-card-alt"></i></h6>
+										<h3></h3>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-2">
 								<a class="text-decoration-none text-dark" href="#">
 									<div class="card my-card shadow text-center p-3">
-										<h4>RETURNS <i style="color:#007bff;" class="fa fa-cart-arrow-down"></i></h4>
+										<h6>RETURNS <i style="color:#007bff;" class="fa fa-cart-arrow-down"></i></h6>
 										<h3></h3>
 									</div>
 								</a>

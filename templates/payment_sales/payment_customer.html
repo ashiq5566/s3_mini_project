@@ -1,0 +1,48 @@
+{% extends 'partial/base.html' %}
+{% block title %} VENDOR PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="mx-5">
+    <div class="row my-4">
+        {% comment %} <div class="col-md-4">
+        </div> {% endcomment %}
+        <div class="col-md-8">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<thead class="tbl-header">
+				<tr>
+					<th scope="col">Date</th>
+					<th scope="col">PO_NO</th>
+					<th scope="col">Net_Amount</th>
+					<th>Staus</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for purchase_order in purchase_orders %}
+					<tr>
+						<td>{{ purchase_order.date }}</td>
+						<td>{{ purchase_order.po_number }}</td>
+						<td>{{ purchase_order.net_amount }}</td>
+						{% if purchase_order.status == True %}
+							<td><span class="badge badge-pill badge-info">Bill Closed</span></td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td><a href="{% url 'payment_purchase_order' purchase_order.vendor_name purchase_order.id %}">View</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+            
+		</div>
+		<div class="col-md-4">
+			<div class="text-right">
+                <h5>VendorID:<span class="badge badge-pill badge-primary">{{current_vendor_id}}</span></h5>
+                <h5>VendorName:<span class="badge badge-pill badge-primary">{{current_vendor_name}}</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

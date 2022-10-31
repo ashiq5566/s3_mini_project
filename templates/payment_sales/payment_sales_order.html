@@ -1,0 +1,62 @@
+{% extends 'partial/base.html' %}
+{% block title %} PURCHASE ORDER PAYMENT PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="mx-5">
+    <div class="row my-4">
+        <div class="col-md-5">
+            <table>
+                <form method="POST">
+                    {% csrf_token %}
+                    <tr><h5>SalesOrder:<span class="badge badge-pill badge-danger">{{current_so}}</span></h5></tr>
+                    <tr>
+                        <td><label>Total Amount:</label></td>
+                        <td><input type="text" name="total" value="{{net_total}}" readonly /></td>
+                    </tr>
+                    <tr>
+                        <td><label>Pending</label></td>
+                        <td><input type="text" name="pend" value="{{purchase_orders.net_pending}}" readonly /></td>
+                    </tr>
+                    {% if purchase_orders.status == False %}
+                    <tr>
+                        <td><label>Enter Amount</label></td>
+                        <td><input type="text" name="paid" /></td>
+                    </tr>
+                    <tr>
+                        <td><input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm"></td>
+                    </tr>
+                    {% else %}
+                    <tr></tr>
+                    {% endif %}
+                       
+                </form>
+            </table>
+        </div>
+        <div class="col-md-7">
+            <div class="text-right">
+                <h5 style="font-weight:bold;">Pending Amount:{{purchase_orders.net_pending}}/-</h5>
+            </div>
+            <table cellpadding="0" cellspacing="0" border="0">
+				<thead class="tbl-header">
+				<tr>
+                    <th scope="col">Payment Date</th>
+					<th scope="col">Payment ID</th>
+					<th scope="col">Paid Amount</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for payment in payments %}
+					<tr>
+                        <td>{{ payment.date }}</td>
+						<td>{{ payment.payment_id }}</td>
+						<td>{{ payment.paid }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+        </div>
+    </div>
+</div>
+{% endblock %}

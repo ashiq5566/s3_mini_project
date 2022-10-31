@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems
 from django.contrib.auth.models import User
-from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm
 from django.contrib import messages
 from django.db.models import Q, Max, F, Sum
 
@@ -428,6 +428,7 @@ def report_pdf(request, pk):
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
   
 def payment(request):
     vendors = Vendor.objects.all()
@@ -663,6 +664,125 @@ def sales_view(request, pk):
         'current_customer_id' : current_customer_id
     }
     return render(request, 'sales/sales_view.html',context)
+
+@login_required
+def sales_report_pdf(request, pk):
+    customers = Customer.objects.all()
+    sales_orders = SalesOrder.objects.all()
+    sales_orders = SalesOrder.objects.get(id=pk)
+    sales_orders1 = SalesOrder.objects.all()
+    current_so_id = sales_orders1.values('id').filter(id=pk)[0]['id']
+    sales_order_views = SoldItems.objects.filter(so_number_id=current_so_id)
+    current_so_no = SalesOrder.objects.get(id=current_so_id).so_number
+    current_customer_id = SalesOrder.objects.get(id=current_so_id).customer_name
+    print_date = SalesOrder.objects.get(id=current_so_id).date
+    discount = SalesOrder.objects.get(id=current_so_id).discount
+    net_amt = SalesOrder.objects.get(id=current_so_id).net_amount
+    total_amt = 0
+    _id = SalesOrder.objects.get(id=pk).id
+    for each in SoldItems.objects.filter(so_number__id=_id):
+        total_amt += each.total_amt
+    template_path = 'pdf/sales_order_pdf.html'
+    context = {
+        'current_so_id' : current_so_id,
+        'print_date' : print_date,
+        'sales_order_views' : sales_order_views,
+        'discount' : discount,
+        'net_amt'  : net_amt,
+        'total_amt' : total_amt,
+        'current_so_no' : current_so_no,
+        'current_customer_id' : current_customer_id
+        
+        
+    }
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="sales_report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+# def sales_payment(request):
+#     customers = Customer.objects.all()
+#     if request.method == "POST":  
+#         form = SelectCustomerForm(request.POST)
+#         c = request.POST.get('customer_id')
+#         c_id = Customer.objects.get(id=c).customer_id
+#         print("gwgw" ,c_id)
+#         return redirect('payment_customer', c_id)
+        
+
+#     else:
+#         form = SelectCustomerForm()
+#     # if request.method == 'POST':
+#     #     v = request.POST.get('v_id')
+#     context = {
+#         "customers" : customers,
+#         "form" : form
+#     }
+#     return render(request, 'payment_sales/payment_add.html',context)  
+    
+# def payment_vendor(request, vendor_id):
+#     vid = Vendor.objects.get(vendor_id=vendor_id).id
+#     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
+#     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
+#     purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid)
+#     # po_id = PurchaseOrder.objects.get()
+    
+#     context = {
+#         "current_vendor_id" : current_vendor_id,
+#         "current_vendor_name" : current_vendor_name,
+#         "purchase_orders" : purchase_orders,
+#     }
+#     return render(request, 'payment/payment_vendor.html',context)     
+
+# @login_required
+# def payment_purchase_order(request,vendor_id, pk):
+#     purchase_orders = PurchaseOrder.objects.get(id=pk)
+#     purchase_orders1 = PurchaseOrder.objects.all()
+#     current_po = PurchaseOrder.objects.get(id=pk).po_number
+#     current_ve = PurchaseOrder.objects.get(id=pk).vendor_name
+#     current_id = PurchaseOrder.objects.get(id=pk).id
+#     net_total = PurchaseOrder.objects.get(id=pk).net_amount
+#     pending_amt = PurchaseOrder.objects.get(po_number=current_po).net_pending
+#     status = PurchaseOrder.objects.get(po_number=current_po).status
+    
+#     payment_no = 101 if Payment.objects.count() == 0 else Payment.objects.aggregate(max=Max('payment_no'))["max"] + 1
+    
+#     pending = PurchaseOrder.objects.get(id=pk).net_amount
+#     if request.method == "POST":
+#         paid_amt = request.POST.get('paid')
+#         Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
+#         for each in Payment.objects.filter(po_number__id=pk):
+#                 pending -= each.paid
+#         record = PurchaseOrder.objects.get(po_number=current_po)
+#         record.net_pending = pending
+#         record.save()
+#         return redirect('payment_purchase_order',current_ve,current_id)
+#     payments = Payment.objects.filter(po_number_id=current_id)
+#     if pending_amt == 0:
+#         stat = PurchaseOrder.objects.get(po_number=current_po)
+#         stat.status = True
+#         stat.save()
+        
+#     context = {
+#         "purchase_orders" : purchase_orders,
+#         "current_po" : current_po,
+#         "net_total" : net_total,
+#         # "pending" : pending,
+#         "payments" : payments
+#     }
+#     return render(request, 'payment/payment_purchase_order.html',context)   
+
+
 
 @login_required
 def demo(request):

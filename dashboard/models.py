@@ -119,9 +119,6 @@ class SoldItems(models.Model):
     def save(self, *args, **kwargs):
         self.total_amt = int(self.quantity) * int(self.unit_price)
         super(SoldItems, self).save(*args, **kwargs) 
-    # def save(self):
-    #     total_amt = self.quantity * self.unit_price
-    #     return total_amt
     
     
     @property
@@ -133,6 +130,15 @@ class Payment(models.Model):
     payment_no = models.IntegerField(null=True)
     payment_id = models.CharField(max_length=100, null=True, unique=True)
     po_number = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,null=True)
+    paid = models.PositiveIntegerField(null=True,default=0)
+    total = models.PositiveIntegerField(null=True)
+    pending = models.PositiveIntegerField(null=True,default=0)
+
+class PaymentSales(models.Model):
+    date = models.DateTimeField(auto_now_add=True,null=True)
+    payment_no = models.IntegerField(null=True)
+    payment_id = models.CharField(max_length=100, null=True, unique=True)
+    so_number = models.ForeignKey(SalesOrder, on_delete=models.CASCADE,null=True)
     paid = models.PositiveIntegerField(null=True,default=0)
     total = models.PositiveIntegerField(null=True)
     pending = models.PositiveIntegerField(null=True,default=0)

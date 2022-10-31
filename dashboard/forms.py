@@ -161,22 +161,7 @@ class StockUpdateForm(forms.ModelForm):
         fields = ['qty_purchased']
     
 class SelectVendorForm(forms.Form):
-    # ch2 = list(PurchaseOrder.objects.all().values('vendor_id'))
     vendor_id = forms.ModelChoiceField(queryset=Vendor.objects.all())
-# class SelectVendorForm(forms.ModelForm):
-#     class Meta:
-#         model = PurchaseOrder
-#         fields = ['vendor_id']
-        
-#         c = list(Vendor.objects.all().values('vendor_id'))
-#         widgets = {
-           
-#             "vendor_id": forms.Select(
-#                 choices=c,
-#                 attrs={
-#                     "required": True,
-#                 }
-            
-#             ),
-            
-#         }
+
+class SelectCustomerForm(forms.Form):
+    customer_id = forms.ModelChoiceField(queryset=Customer.objects.all())
