@@ -4,7 +4,7 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems
+from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems,PaymentSales
 from django.contrib.auth.models import User
 from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm
 from django.contrib import messages
@@ -710,77 +710,80 @@ def sales_report_pdf(request, pk):
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-# def sales_payment(request):
-#     customers = Customer.objects.all()
-#     if request.method == "POST":  
-#         form = SelectCustomerForm(request.POST)
-#         c = request.POST.get('customer_id')
-#         c_id = Customer.objects.get(id=c).customer_id
-#         print("gwgw" ,c_id)
-#         return redirect('payment_customer', c_id)
+
+@login_required
+def sales_payment(request):
+    customers = Customer.objects.all()
+    if request.method == "POST":  
+        form = SelectCustomerForm(request.POST)
+        c = request.POST.get('customer_id')
+        c_id = Customer.objects.get(id=c).customer_id
+        print("gwgw" ,c_id)
+        return redirect('payment_customer', c_id)
         
 
-#     else:
-#         form = SelectCustomerForm()
-#     # if request.method == 'POST':
-#     #     v = request.POST.get('v_id')
-#     context = {
-#         "customers" : customers,
-#         "form" : form
-#     }
-#     return render(request, 'payment_sales/payment_add.html',context)  
-    
-# def payment_vendor(request, vendor_id):
-#     vid = Vendor.objects.get(vendor_id=vendor_id).id
-#     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
-#     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
-#     purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid)
-#     # po_id = PurchaseOrder.objects.get()
-    
-#     context = {
-#         "current_vendor_id" : current_vendor_id,
-#         "current_vendor_name" : current_vendor_name,
-#         "purchase_orders" : purchase_orders,
-#     }
-#     return render(request, 'payment/payment_vendor.html',context)     
+    else:
+        form = SelectCustomerForm()
+    # if request.method == 'POST':
+    #     v = request.POST.get('v_id')
+    context = {
+        "customers" : customers,
+        "form" : form
+    }
+    return render(request, 'payment_sales/payment_add.html',context)  
 
-# @login_required
-# def payment_purchase_order(request,vendor_id, pk):
-#     purchase_orders = PurchaseOrder.objects.get(id=pk)
-#     purchase_orders1 = PurchaseOrder.objects.all()
-#     current_po = PurchaseOrder.objects.get(id=pk).po_number
-#     current_ve = PurchaseOrder.objects.get(id=pk).vendor_name
-#     current_id = PurchaseOrder.objects.get(id=pk).id
-#     net_total = PurchaseOrder.objects.get(id=pk).net_amount
-#     pending_amt = PurchaseOrder.objects.get(po_number=current_po).net_pending
-#     status = PurchaseOrder.objects.get(po_number=current_po).status
+@login_required
+def payment_customer(request, customer_id):
+    cid = Customer.objects.get(customer_id=customer_id).id
+    current_customer_id = Customer.objects.get(id=cid).customer_id
+    current_customer_name = Customer.objects.get(id=cid).customer_name
+    sales_orders = SalesOrder.objects.filter(customer_name = cid)
+    # po_id = PurchaseOrder.objects.get()
     
-#     payment_no = 101 if Payment.objects.count() == 0 else Payment.objects.aggregate(max=Max('payment_no'))["max"] + 1
+    context = {
+        "current_customer_id" : current_customer_id,
+        "current_customer_name" : current_customer_name,
+        "sales_orders" : sales_orders,
+    }
+    return render(request, 'payment_sales/payment_customer.html',context)     
+
+@login_required
+def payment_sales_order(request,customer_id, pk):
+    sales_orders = SalesOrder.objects.get(id=pk)
+    sales_orders1 = SalesOrder.objects.all()
+    current_so = SalesOrder.objects.get(id=pk).so_number
+    current_cu = SalesOrder.objects.get(id=pk).customer_name
+    current_id = SalesOrder.objects.get(id=pk).id
+    net_total = SalesOrder.objects.get(id=pk).net_amount
+    pending_amt = SalesOrder.objects.get(so_number=current_so).net_pending
+    status = SalesOrder.objects.get(so_number=current_so).status
     
-#     pending = PurchaseOrder.objects.get(id=pk).net_amount
-#     if request.method == "POST":
-#         paid_amt = request.POST.get('paid')
-#         Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
-#         for each in Payment.objects.filter(po_number__id=pk):
-#                 pending -= each.paid
-#         record = PurchaseOrder.objects.get(po_number=current_po)
-#         record.net_pending = pending
-#         record.save()
-#         return redirect('payment_purchase_order',current_ve,current_id)
-#     payments = Payment.objects.filter(po_number_id=current_id)
-#     if pending_amt == 0:
-#         stat = PurchaseOrder.objects.get(po_number=current_po)
-#         stat.status = True
-#         stat.save()
+    payment_no = 101 if PaymentSales.objects.count() == 0 else PaymentSales.objects.aggregate(max=Max('payment_no'))["max"] + 1
+    
+    pending = SalesOrder.objects.get(id=pk).net_amount
+    if request.method == "POST":
+        paid_amt = request.POST.get('paid')
+        PaymentSales(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),so_number=sales_orders1.get(so_number=current_so),paid=paid_amt).save()
+        for each in PaymentSales.objects.filter(so_number__id=pk):
+                pending -= each.paid
+        record = SalesOrder.objects.get(so_number=current_so)
+        record.net_pending = pending
+        record.save()
+        return redirect('payment_sales_order',current_cu,current_id)
+    sales_payments = PaymentSales.objects.filter(so_number_id=current_id)
+    if pending_amt == 0:
+        stat = SalesOrder.objects.get(so_number=current_so)
+        stat.status = True
+        stat.save()
         
-#     context = {
-#         "purchase_orders" : purchase_orders,
-#         "current_po" : current_po,
-#         "net_total" : net_total,
-#         # "pending" : pending,
-#         "payments" : payments
-#     }
-#     return render(request, 'payment/payment_purchase_order.html',context)   
+    context = {
+        "sales_orders" : sales_orders,
+        "current_so" : current_so,
+        "net_total" : net_total,
+        # "pending" : pending,
+        "sales_payments" : sales_payments
+    }
+    return render(request, 'payment_sales/payment_sales_order.html',context)   
 
 
 

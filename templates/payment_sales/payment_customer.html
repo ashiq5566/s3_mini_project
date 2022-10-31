@@ -20,17 +20,17 @@
 				</tr>
 				</thead>
 				<tbody>
-					{% for purchase_order in purchase_orders %}
+					{% for sales_order in sales_orders %}
 					<tr>
-						<td>{{ purchase_order.date }}</td>
-						<td>{{ purchase_order.po_number }}</td>
-						<td>{{ purchase_order.net_amount }}</td>
-						{% if purchase_order.status == True %}
+						<td>{{ sales_order.date }}</td>
+						<td>{{ sales_order.so_number }}</td>
+						<td>{{ sales_order.net_amount }}</td>
+						{% if sales_order.status == True %}
 							<td><span class="badge badge-pill badge-info">Bill Closed</span></td>
 						{% else %}
 							<td></td>
 						{% endif %}
-						<td><a href="{% url 'payment_purchase_order' purchase_order.vendor_name purchase_order.id %}">View</a></td>
+						<td><a href="{% url 'payment_sales_order' sales_order.customer_name sales_order.id %}">View</a></td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -39,8 +39,8 @@
 		</div>
 		<div class="col-md-4">
 			<div class="text-right">
-                <h5>VendorID:<span class="badge badge-pill badge-primary">{{current_vendor_id}}</span></h5>
-                <h5>VendorName:<span class="badge badge-pill badge-primary">{{current_vendor_name}}</span></h5>
+                <h5>CustomerID:<span class="badge badge-pill badge-primary">{{current_customer_id}}</span></h5>
+                <h5>CustomerName:<span class="badge badge-pill badge-primary">{{current_customer_name}}</span></h5>
             </div>
         </div>
     </div>

@@ -31,8 +31,8 @@ urlpatterns = [
     path('sales/add/<so_number>',views.sales_add,name='sales_add'),
     path('sales/add/<so_number>/confirm',views.sales_add_confirm,name='sales_add_confirm'),
     path('sales/add/<so_number>/solditem_delete/<int:id>',views.solditem_delete,name='solditem_delete'),
-    # path('sales/payment/',views.sales_payment,name='sales_payment'),
-    # path('sales/payment/<customer_id>',views.payment_customer,name='payment_customer'),
-    # path('sales/payment/<customer_id>/<int:pk>',views.payment_sales_order,name='payment_sales_order'),
+    path('sales/payment/',views.sales_payment,name='sales_payment'),
+    path('sales/payment/<customer_id>',views.payment_customer,name='payment_customer'),
+    path('sales/payment/<customer_id>/<int:pk>',views.payment_sales_order,name='payment_sales_order'),
 ]
 
