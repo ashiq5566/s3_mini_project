@@ -149,4 +149,11 @@ class PurchaseReturn(models.Model):
     item_name = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
     return_qty = models.PositiveIntegerField(null=True,default=0)
     amount = models.PositiveIntegerField(null=True)
+    
+class SalesReturn(models.Model):
+    date = models.DateTimeField(auto_now_add=True,null=True)
+    so_number = models.ForeignKey(SalesOrder, on_delete=models.CASCADE,null=True)
+    item_name = models.ForeignKey(Item, on_delete=models.CASCADE,null=True)
+    return_qty = models.PositiveIntegerField(null=True,default=0)
+    amount = models.PositiveIntegerField(null=True)
 

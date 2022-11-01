@@ -4,9 +4,9 @@ from unicodedata import name
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems,PaymentSales, PurchaseReturn
+from .models import Customer, SalesOrder, Vendor, Item,MyUUIDModel,PurchasedItems, PurchaseOrder, Payment,SoldItems,PaymentSales, PurchaseReturn, SalesReturn
 from django.contrib.auth.models import User
-from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm, SelectPOForm
+from .forms import CustomerForm, PurchaseOrderForm, VendorForm, ItemForm,PurchasedItemForm, SelectVendorForm,SalesOrderForm, SoldItemForm, SelectCustomerForm, SelectPOForm, SelectSOForm
 from django.contrib import messages
 from django.db.models import Q, Max, F, Sum
 
@@ -448,8 +448,9 @@ def payment(request):
         "vendors" : vendors,
         "form" : form
     }
-    return render(request, 'payment/payment_add.html',context)  
-
+    return render(request, 'payment/payment_add.html',context)
+  
+@login_required
 def purchase_return(request):
     if request.method == "POST":
         form = SelectPOForm(request.POST)
@@ -465,7 +466,7 @@ def purchase_return(request):
         
     return render(request, 'purchaseReturn/purchase_return.html',context)    
 
-
+@login_required
 def purchase_return_po(request,po_number):
     items = Item.objects.all()
     current_po = po_number
@@ -481,6 +482,11 @@ def purchase_return_po(request,po_number):
         record = Item.objects.get(id=inm)
         record.qty_purchased = int(record.qty_purchased) - int(re_qty)
         record.save()
+        record2 = PurchaseOrder.objects.get(po_number=current_po)
+        record2.net_amount = int(record2.net_amount) - int(amt)
+        record2.save()
+        
+        
         return redirect('purchase_return_po', current_po)
         
     
@@ -598,7 +604,8 @@ def sales_add(request, so_number):
         i_name=request.POST['item_name']
         current_item_id = items.values('item_id').filter(id=i_name)[0]['item_id']
         qty=int(request.POST['quantity'])
-        uprice=int(request.POST['unit_price'])
+        # uprice=int(request.POST['unit_price'])
+        uprice = Item.objects.get(item_id=current_item_id).unit_price
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
         print("sdsd", i_name)
@@ -832,6 +839,57 @@ def payment_sales_order(request,customer_id, pk):
         "sales_payments" : sales_payments
     }
     return render(request, 'payment_sales/payment_sales_order.html',context)   
+
+def sales_return(request):
+    if request.method == "POST":
+        form = SelectSOForm(request.POST)
+        so = request.POST.get('SalesOrderID')
+        current_so = SalesOrder.objects.get(id=so)
+        print("gwgw" ,so)
+        return redirect('sales_return_po',current_so)
+    else:
+        form = SelectSOForm()
+    context = {
+        'form' : form,
+    }
+        
+    return render(request, 'salesReturn/sales_return.html',context)    
+
+
+def sales_return_po(request,so_number):
+    items = Item.objects.all()
+    current_so = so_number
+    sn_id = SalesOrder.objects.get(so_number=so_number).id 
+    sold_items = SoldItems.objects.filter(so_number_id = sn_id)
+    if request.method == "POST":
+        item_name = request.POST.get('i_name')
+        re_qty = request.POST.get('rq')
+        inm = Item.objects.get(name=item_name).id
+        unit_price = Item.objects.get(id = inm).unit_price
+        amt = int(re_qty) * int(unit_price)
+        SalesReturn(so_number=SalesOrder.objects.get(so_number=current_so),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
+        record = Item.objects.get(id=inm)
+        record.qty_sold = int(record.qty_sold) + int(re_qty)
+        record.save()
+        record2 = SalesOrder.objects.get(so_number=current_so)
+        record2.net_amount = int(record2.net_amount) - int(amt)
+        record2.save()
+        
+        
+        return redirect('sales_return_po', current_so)
+        
+    
+    sales_returns = SalesReturn.objects.filter(so_number_id=sn_id)
+    
+        
+    
+    context = {
+        'sold_items' : sold_items,
+        'current_so' : current_so,
+        'sales_returns' : sales_returns
+    }
+        
+    return render(request, 'salesReturn/sales_return_po.html',context) 
 
 @login_required
 def demo(request):

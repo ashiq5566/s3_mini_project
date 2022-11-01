@@ -25,9 +25,7 @@ urlpatterns = [
     path('payment/<vendor_id>',views.payment_vendor,name='payment_vendor'),
     path('payment/<vendor_id>/<int:pk>',views.payment_purchase_order,name='payment_purchase_order'),
     path('purchase/return',views.purchase_return,name='purchase_return'),
-    path('purchase/return/<po_number>',views.purchase_return_po,name='purchase_return_po'),
-    
-    
+    path('purchase/return/<po_number>',views.purchase_return_po,name='purchase_return_po'), 
     path('demo/',views.demo,name='demo'),
     path('sales/',views.sales,name='sales'),
     path('sales/view/<int:pk>',views.sales_view,name='sales_view'),
@@ -38,5 +36,7 @@ urlpatterns = [
     path('sales/payment/',views.sales_payment,name='sales_payment'),
     path('sales/payment/<customer_id>',views.payment_customer,name='payment_customer'),
     path('sales/payment/<customer_id>/<int:pk>',views.payment_sales_order,name='payment_sales_order'),
+    path('sales/return',views.sales_return,name='sales_return'),
+    path('sales/return/<so_number>',views.sales_return_po,name='sales_return_po'),
 ]
 

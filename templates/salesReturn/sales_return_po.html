@@ -1,0 +1,58 @@
+{% extends 'partial/base.html' %}
+{% block title %} PURCHASE ORDER RETURN PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="mx-5">
+    <div class="row my-4">
+        <div class="col-md-5">
+            <table>
+                <form method="POST">
+                    {% csrf_token %}
+                    <tr><h5>SalesOrder:<span class="badge badge-pill badge-danger">{{current_so}}</span></h5></tr>
+                    <tr>
+                        <td><label>ItemName:</label></td>
+                        <td>
+                            <select name="i_name" >
+                                {% for sold_item in sold_items %}
+                                <option>{{sold_item.item_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>Return Quantity</label></td>
+                        <td><input type="text" name="rq" /></td>
+                    </tr>
+                    <tr>
+                        <td><input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Confirm"></td>
+                    </tr> 
+                </form>
+            </table>
+        </div>
+        <div class="col-md-7">
+            <table cellpadding="0" cellspacing="0" border="0">
+				<thead class="tbl-header">
+				<tr>
+                    <th scope="col">Return Date</th>
+					<th scope="col">ItemName</th>
+					<th scope="col">Return Quantity</th>
+                    <th scope="col">Amount</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for sales_return in sales_returns %}
+					<tr>
+                        <td>{{ sales_return.date }}</td>
+						<td>{{ sales_return.item_name }}</td>
+						<td>{{ sales_return.return_qty }}</td>
+                        <td>{{ sales_return.amount }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+        </div>
+    </div>
+</div>
+{% endblock %}

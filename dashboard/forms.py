@@ -106,7 +106,7 @@ class SoldItemForm(forms.ModelForm):
 
     class Meta:
         model = SoldItems
-        fields = ['item_name', 'quantity','unit_price']
+        fields = ['item_name', 'quantity']
         
         ch = list(Item.objects.all().values('name'))
         widgets = {
@@ -168,3 +168,6 @@ class SelectCustomerForm(forms.Form):
 
 class SelectPOForm(forms.Form):
     PurchaseOrderID = forms.ModelChoiceField(queryset=PurchaseOrder.objects.all())
+
+class SelectSOForm(forms.Form):
+    SalesOrderID = forms.ModelChoiceField(queryset=SalesOrder.objects.all())

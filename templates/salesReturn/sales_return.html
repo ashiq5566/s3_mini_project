@@ -1,0 +1,23 @@
+{% extends 'partial/base.html' %}
+{% block title %} SALES RETURN {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div class="mx-5">
+    <div class="row my-4">
+        <div class="col-md-4">
+            <form method = "POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">  
+                <div class="form-group text-right">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+</div>      
+
+{% endblock %}
