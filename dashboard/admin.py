@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, PurchaseReturn, Vendor, Item, MyUUIDModel,PurchasedItems, PurchaseOrder, Payment, SalesOrder, SoldItems
+from .models import Customer, PurchaseReturn, Vendor, Item, MyUUIDModel,PurchasedItems, PurchaseOrder, Payment, SalesOrder, SoldItems,  SalesReturn
 
 admin.site.site_header = "Inventory Management System"
 
@@ -30,6 +30,8 @@ class PaymentAdmin(admin.ModelAdmin):
 class PurchaseReturnAdmin(admin.ModelAdmin):
     list_display = ('po_number','item_name','return_qty','amount')
 
+class SalesReturnAdmin(admin.ModelAdmin):
+    list_display = ('so_number','item_name','return_qty','amount')
 class MyUUIDModelAdmin(admin.ModelAdmin):
     list_display = ('regnumber1','username')
 
@@ -48,6 +50,7 @@ admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SoldItems, SoldItemsAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PurchaseReturn, PurchaseReturnAdmin)
+admin.site.register(SalesReturn, SalesReturnAdmin)
 admin.site.register(MyUUIDModel, MyUUIDModelAdmin)
 
 

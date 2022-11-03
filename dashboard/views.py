@@ -28,8 +28,12 @@ from xhtml2pdf import pisa
 
 @login_required
 def index(request):
+    items = Item.objects.all()
     
-    return render(request, 'dashboard/index.html')
+    context = {
+        'items' : items,
+    }
+    return render(request, 'dashboard/index.html',context)
 
 
 @login_required
@@ -185,8 +189,10 @@ def stock(request):
         if form.is_valid():
             Item(item_no=p_id,item_id=(f'{"P"}{p_id}'),name=name,unit_price=price).save()
             # form.save()
+     
     else:
         form = ItemForm
+    
     context = {
         'items': items,
         'form' : form,
@@ -292,8 +298,7 @@ def purchase_add(request, po_number):
         uprice=int(request.POST['unit_price'])
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
-        print("sdsd", i_name)
-        record.qty_purchased = record.qty_purchased + qty 
+        record.qty_purchased = record.qty_purchased + qty
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
@@ -609,7 +614,8 @@ def sales_add(request, so_number):
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
         print("sdsd", i_name)
-        record.qty_sold = record.qty_sold + qty 
+        record.qty_sold = record.qty_sold + qty
+        record.qty_purchased = int(record.qty_purchased) - int(record.qty_sold)
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', so_number)
@@ -678,6 +684,7 @@ def solditem_delete(request, id, so_number):
     if request.method == 'POST':
         sales_items.delete()
         stock.qty_sold = stock.qty_sold - qty
+        stock.qty_purchased = int(stock.qty_purchased) + int(qty)
         stock.save()
         
         return redirect('sales_add',so_number)
@@ -869,7 +876,8 @@ def sales_return_po(request,so_number):
         amt = int(re_qty) * int(unit_price)
         SalesReturn(so_number=SalesOrder.objects.get(so_number=current_so),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
         record = Item.objects.get(id=inm)
-        record.qty_sold = int(record.qty_sold) + int(re_qty)
+        record.qty_sold = int(record.qty_sold) - int(re_qty)
+        record.qty_purchased = int(record.qty_purchased) + int(re_qty)
         record.save()
         record2 = SalesOrder.objects.get(so_number=current_so)
         record2.net_amount = int(record2.net_amount) - int(amt)

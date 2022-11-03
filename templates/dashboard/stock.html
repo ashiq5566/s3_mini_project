@@ -9,150 +9,92 @@
 {% include 'partial/topnav_staff.html'%}
 
 <div class="mx-5">
-    <div class="row my-4">
+	<div class="row my-4">
 
-        <!-- modal begin -->
-          <div>
-            <script>
-              $(document).ready(function() {
-                    $('#P_Add').modal('show');
-              });
-            </script>
-          </div>
-  
-          <div class="modal fade" id="P_Add" tabindex="-1" role="dialog" aria-labelledby="P_AddTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Add Products</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form method="POST">
-                      {% csrf_token %}
-                      {{ form|crispy }}
-                      
-                      {% comment %} <div class="form-group">
-                        <input type="hidden" name="i_id" class="form-control" id="exampleInputPassword1" readonly />
-                      </div>
-                      <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="pname" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter name">
-                      </div>
-                      <div class="form-group">
-                        <label>Unit Price</label>
-                        <input type="text" name="uprice" class="form-control" id="exampleInputPassword1" placeholder="Unit_Price">
-                      </div> {% endcomment %}
-                    {% comment %} <label>item_id:</label>
-                    <input type="text" name="item_id" /><br />
-                    <label>name:</label>
-                    <input type="text" name="item_name" /> {% endcomment %}
-                    <input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">
-                </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col mt-4 text-right">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#P_Add">
-              Add
-            </button>
-        </div>
-  
-          <!-- Modal end -->
-          <!-- view modal -->
-          {% comment %} <div>
-            <script>
-                $(document).ready(function() {
-                    $('#viewVe-{{ product.id}}').modal('show');
-              });
-            </script>
-          </div>
-          {% for product in products %}
-          <div class="modal fade" id="viewVe-{{ product.id}}" tabindex="-1" role="dialog" aria-labelledby="viewVe-{{ product.id}}Title" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">product Details</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <table>
-                    <tr>
-                      <th>product_id</th>
-                      <td>{{ product.product_id }}</td>
-                    </tr>
-                    <tr>
-                      <th>Name</th>
-                      <td>{{ product.name }}</td>
-                    </tr>
-                    <tr>
-                      <th>Address</th>
-                      <td>{{ product.product_address }}</td>
-                    </tr>
-                    <tr>
-                      <th>Phone</th>
-                      <td>{{ product.product_mobile }}</td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %} {% endcomment %}
-          <!-- view modal end -->
-  
-          <div class="col-md-12">
-                <div class="tbl-header">
-                  <table cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                      <tr>
-                        <th scope="col">Product_id</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Unit_Price</th>
-                        <th scope="col">qty_purchased</th>
-                        <th scope="col">QTY_Sold</th>
-                        <th scope="col">Status</th>
-						<th scope="col"></th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
-                <div class="tbl-content">
-                  <table cellpadding="0" cellspacing="0" border="0">
-                    <tbody>
-                      {% for item in items %}
-                        <tr>
-                          <td>{{ item.item_id }}</td>
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.unit_price }}</td>
-                          <td>{{ item.qty_purchased }}</td>
-                          <td>{{ item.qty_sold }}</td>
-                          {% if item.status == True %}
-                          <td>Available</td>
-                          {% else %}
-                          <td>Not Available</td>
-                          {% endif %}
-						  <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'stock_update' item.id %}">Edit</a></td>
-                          {% comment %} <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewVe-{{ vendor.id}}">View</a></td> {% endcomment %}
-                          {% comment %} <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td> {% endcomment %}
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-          </div>
-      </div>
+		<!-- modal begin -->
+			<div>
+				<script>
+				$(document).ready(function() {
+						$('#P_Add').modal('show');
+				});
+				</script>
+			</div>
+
+			<div class="modal fade" id="P_Add" tabindex="-1" role="dialog" aria-labelledby="P_AddTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLongTitle">Add Products</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form method="POST">
+									{% csrf_token %}
+									{{ form|crispy }}
+									
+									
+									<input class="btn btn-success btn-block" data-backdrop="static" type="submit" value="Add">
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="col mt-4 text-right">
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#P_Add">
+				Add
+				</button>
+			</div>
+
+
+			<div class="col-md-12">
+				<div class="tbl-header">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<thead>
+						<tr>
+							<th scope="col">Product_id</th>
+							<th scope="col">Name</th>
+							<th scope="col">Unit_Price</th>
+							<th scope="col">qty_purchased</th>
+							<th scope="col">QTY_Sold</th>
+							<th scope="col">Status</th>
+							<th scope="col"></th>
+						</tr>
+						</thead>
+					</table>
+				</div>
+				<div class="tbl-content">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tbody>
+							{% for item in items %}
+								<tr>
+								<td>{{ item.item_id }}</td>
+								<td>{{ item.name }}</td>
+								<td>{{ item.unit_price }}</td>
+								<td>{{ item.qty_purchased }}</td>
+							<td>{{ item.qty_sold }}</td>
+							{% if item.qty_purchased > 0 %}
+							<td>Available</td>
+							{% else %}
+							<td>Not Available</td>
+							{% endif %}
+							<td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'stock_update' item.id %}">Edit</a></td>
+							{% comment %} <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewVe-{{ vendor.id}}">View</a></td> {% endcomment %}
+							{% comment %} <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td> {% endcomment %}
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+	</div>
 </div>
+
+
 {% endif %}
 
 {% endblock %}
