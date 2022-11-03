@@ -1,23 +1,11 @@
-	<!-- Topside -->
-	<div class="mx-5">
+{% load static %}
+<!-- Topside -->
+	{% comment %} <div class="mx-5">
 		<div class="row mt-4">
-			<!-- <div class="col-md-4">
-				<div class="card">
-					<div class="card-header bg-info text-white">
-						information
-					</div>
-					<div class="card-body">
-						<marquee behavior="" direction="">
-							<h3 class="my-3">This is the information for you</h3>
-						</marquee>
-					</div>
-				</div> -->
 			</div>
 			<div class="col-md-">
 				<div class="card">
-					<!-- <div class="card-header bg-info text-white">
-						
-					</div> -->
+					
 					<div class="card-body">
 						<div class="row">
 							<div class="col-md-4">
@@ -49,7 +37,44 @@
 				</div>
 			</div>
 		</div>
+	</div> {% endcomment %}
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{% static 'sidebar/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'sidebar/dataTables.bootstrap5.min.css' %}">
+		<link rel="stylesheet" href="{% static 'sidebar/navstyle.css' %}">
+	</head>
+	<body>
+		
+<div class="offcanvas offcanvas-start sidebar-nav bg-dark border-top border-bottom border-light pt-4"
+  tabindex="-1"
+  id="sidebar">
+	<div class="offcanvas-body p-0">
+			<nav class="navbar-dark">
+			<ul class="navbar-nav">
+				<li>
+					<a href="{% url 'dashboard-staff' %}" class="nav-link px-3 active">
+						<span>STAFFS</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'dashboard-customer' %}" class="nav-link px-3 active">
+						<span>CUSTOMERS</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'dashboard-vendor' %}" class="nav-link px-3 active">
+						<span>VENDORS</span>
+					</a>
+				</li>
+				
+			</ul>
+			</nav>
 	</div>
-
-
+</div>
 	<!-- topside -->
