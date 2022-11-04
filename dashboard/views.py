@@ -283,6 +283,10 @@ def purchase_add(request, po_number):
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
     purchase_order_individals = PurchasedItems.objects.filter(po_number_id=current_po_number_view)
     
+    po_id = PurchaseOrder.objects.get(po_number=current_po_number).id
+    p_items = PurchasedItems.objects.filter(po_number_id=po_id)
+    p_lists = p_items.values('item_name')
+    print('p_lists' ,p_lists)
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
@@ -299,9 +303,12 @@ def purchase_add(request, po_number):
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
         record.qty_purchased = record.qty_purchased + qty
+        # item_id = Item.objects.get(name=i_name).id
+        
         if form.is_valid():
             # form.save()
             # return redirect('purchase_add', po_number)
+            # if 
             PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_name=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
             record.save()
             return redirect('purchase_add', po_number)
@@ -900,14 +907,8 @@ def sales_return_po(request,so_number):
     return render(request, 'salesReturn/sales_return_po.html',context) 
 
 @login_required
-def demo(request):
-    regno = 1 if MyUUIDModel.objects.count() == 0 else MyUUIDModel.objects.aggregate(max=Max('regnumber'))["max"] + 1
-    if request.method == 'POST':
-        regnumber = request.POST['regnumber']
-        username = request.POST['username']
-        MyUUIDModel(username=username,regnumber=regno,regnumber1=(f'{"V00"}{regno}')).save()
-        
-    return render(request, 'dashboard/uuid.html')
+def error_404(request):    
+    return render(request, 'dashboard/error.html')
 @login_required
 def product_delete(request, pk):
     # items = Product.objects.get(id=pk)
