@@ -85,9 +85,7 @@ class PurchasedItems(models.Model):
     # def save(self):
     #     total_amt = self.quantity * self.unit_price
     #     return total_amt
-    
-    
-    @property
+    @property   
     def item_id(self):
         return self.item_name.item_id
     

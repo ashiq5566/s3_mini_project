@@ -285,8 +285,9 @@ def purchase_add(request, po_number):
     
     po_id = PurchaseOrder.objects.get(po_number=current_po_number).id
     p_items = PurchasedItems.objects.filter(po_number_id=po_id)
-    p_lists = p_items.values('item_name')
+    p_lists = p_items.values_list('item_name', flat=True)
     print('p_lists' ,p_lists)
+    
     total_amt = 0
     _id = PurchaseOrder.objects.get(po_number=po_number).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
@@ -303,15 +304,17 @@ def purchase_add(request, po_number):
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
         record.qty_purchased = record.qty_purchased + qty
-        # item_id = Item.objects.get(name=i_name).id
-        
+        item_id = Item.objects.get(item_id=current_item_id).id
+        print("dfdff",i_name) 
+        print(item_id)
         if form.is_valid():
-            # form.save()
-            # return redirect('purchase_add', po_number)
-            # if 
-            PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_name=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
-            record.save()
-            return redirect('purchase_add', po_number)
+            if item_id in p_lists:     
+                return redirect('error_404')
+            else: 
+                PurchasedItems(po_number=purchase_orders.get(po_number=current_po_number),item_name=items.get(item_id=current_item_id),vendor_id=vendors.get(id=current_vendor_id),quantity=qty,unit_price=uprice).save()
+                record.save()
+                return redirect('purchase_add', po_number)
+
         
     else:
         form = PurchasedItemForm
@@ -604,6 +607,10 @@ def sales_add(request, so_number):
     current_so_number_view = sales_orders.values('id').filter(so_number=so_number)[0]['id']
     sales_order_individals = SoldItems.objects.filter(so_number_id=current_so_number_view)
     
+    so_id = SalesOrder.objects.get(so_number=current_so_number).id
+    p_items = SoldItems.objects.filter(so_number_id=so_id)
+    p_lists = p_items.values_list('item_name', flat=True)
+    
     total_amt = 0
     _id = SalesOrder.objects.get(so_number=so_number).id
     for each in SoldItems.objects.filter(so_number__id=_id):
@@ -623,12 +630,17 @@ def sales_add(request, so_number):
         print("sdsd", i_name)
         record.qty_sold = record.qty_sold + qty
         record.qty_purchased = int(record.qty_purchased) - int(record.qty_sold)
+        item_id = Item.objects.get(item_id=current_item_id).id
         if form.is_valid():
+            if item_id in p_lists:     
+                return redirect('error_404')
+            else: 
+                SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
+                record.save()
+                return redirect('sales_add', so_number)
             # form.save()
             # return redirect('purchase_add', so_number)
-            SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
-            record.save()
-            return redirect('sales_add', so_number)
+            
         
     else:
         form = SoldItemForm
@@ -644,6 +656,8 @@ def sales_add(request, so_number):
         'current_customer_id1':current_customer_id1,
         'sales_order_individals':sales_order_individals,
         'total_amt':  total_amt,
+        'item_id' : item_id,
+        'p_lists' : p_lists
         # 'each_total_amount':each_total_amount
     } 
     return render(request, 'sales/sales_add.html',context)
