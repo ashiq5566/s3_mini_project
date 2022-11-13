@@ -1,0 +1,42 @@
+{% extends 'partial/base.html' %}
+{% block title %} RE-ORDER PAGE {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include 'partial/topnav_staff.html'%}
+<div style="margin-left:290px;margin-right:20px">
+    <div class="row my-4">
+        <div style="margin-bottom:20px;">
+            <a href="{% url 're_order_list' %}" class="btn bg-pink btn-light btn-bold px-4 float-right mt-3 mt-lg-0"><i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>Print</a>
+        </div>
+        <div class="col-md-12">
+            <div class="tbl-header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <thead>
+                    <tr>
+                        <th scope="col">Product_id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">QTY in Stock</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                            <td>{{ item.item_id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.qty_purchased }}</td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% comment %} <div class="col-md-4">
+        </div> {% endcomment %}
+    </div>
+</div>      
+
+{% endblock %}>

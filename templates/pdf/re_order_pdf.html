@@ -1,0 +1,23 @@
+<div class="tbl-header">
+    <table cellpadding="2" cellspacing="3" border="2">
+        <thead>
+        <tr>
+            <th scope="col">Product_id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Quantity in Stock</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div class="tbl-content">
+    <table cellpadding="2" cellspacing="3" border="1">
+        <tbody>
+            {% for item in items %}
+                <tr>
+                <td>{{ item.item_id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.qty_purchased }}</td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

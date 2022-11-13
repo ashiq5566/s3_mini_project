@@ -17,13 +17,13 @@
                 <h1>
                     Oops!</h1>
                 <h2>
-                    404 Not Found</h2>
-                <div class="error-details">
-                    Sorry, an error has occured, Requested page not found!
-                </div>
+                    </h2>
+                <h2 class="error-details">
+                    Sorry, the item could not be added or updated <br>because duplicate values were found!
+                </h2>
                 <div class="error-actions">
-                    <a href="{% url 'purchase' %}" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
-                        Take Me Home </a><a href="" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope"></span> Contact Support </a>
+                    {% comment %} <a href="{% url 'purchase' %}" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
+                        Take Me Home </a><a href="" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-envelope"></span> Contact Support </a> {% endcomment %}
                 </div>
             </div>
         </div>

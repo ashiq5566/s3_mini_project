@@ -495,11 +495,14 @@ def purchase_return_po(request,po_number):
         amt = int(re_qty) * int(unit_price)
         PurchaseReturn(po_number=PurchaseOrder.objects.get(po_number=current_po),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
         record = Item.objects.get(id=inm)
-        record.qty_purchased = int(record.qty_purchased) - int(re_qty)
-        record.save()
-        record2 = PurchaseOrder.objects.get(po_number=current_po)
-        record2.net_amount = int(record2.net_amount) - int(amt)
-        record2.save()
+        if int(re_qty) <= int(record.qty_purchased):
+            record.qty_purchased = int(record.qty_purchased) - int(re_qty)
+            record.save()
+            record2 = PurchaseOrder.objects.get(po_number=current_po)
+            record2.net_amount = int(record2.net_amount) - int(amt)
+            record2.save()
+        else:
+            return redirect('error_404')
         
         
         return redirect('purchase_return_po', current_po)
@@ -656,7 +659,7 @@ def sales_add(request, so_number):
         'current_customer_id1':current_customer_id1,
         'sales_order_individals':sales_order_individals,
         'total_amt':  total_amt,
-        'item_id' : item_id,
+        # 'item_id' : item_id,
         'p_lists' : p_lists
         # 'each_total_amount':each_total_amount
     } 
@@ -897,12 +900,15 @@ def sales_return_po(request,so_number):
         amt = int(re_qty) * int(unit_price)
         SalesReturn(so_number=SalesOrder.objects.get(so_number=current_so),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
         record = Item.objects.get(id=inm)
-        record.qty_sold = int(record.qty_sold) - int(re_qty)
-        record.qty_purchased = int(record.qty_purchased) + int(re_qty)
-        record.save()
-        record2 = SalesOrder.objects.get(so_number=current_so)
-        record2.net_amount = int(record2.net_amount) - int(amt)
-        record2.save()
+        if int(re_qty) <= int(record.qty_sold):
+            record.qty_sold = int(record.qty_sold) - int(re_qty)
+            record.qty_purchased = int(record.qty_purchased) + int(re_qty)
+            record.save()
+            record2 = SalesOrder.objects.get(so_number=current_so)
+            record2.net_amount = int(record2.net_amount) - int(amt)
+            record2.save()
+        else:
+            return redirect('error_404')
         
         
         return redirect('sales_return_po', current_so)
@@ -923,6 +929,38 @@ def sales_return_po(request,so_number):
 @login_required
 def error_404(request):    
     return render(request, 'dashboard/error.html')
+
+@login_required
+def re_order(request):
+    items = Item.objects.filter(qty_purchased__lte=25)
+    print(items)
+    context = {
+        'items' : items
+    }
+    return render(request, 'dashboard/re_order.html',context)
+
+@login_required
+def re_order_list(request):
+    items = Item.objects.filter(qty_purchased__lte=25)
+    print(items)
+    template_path = 'pdf/re_order_pdf.html'
+    context = {
+        'items' : items
+    }
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="re_order_list.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
 @login_required
 def product_delete(request, pk):
     # items = Product.objects.get(id=pk)

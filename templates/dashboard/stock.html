@@ -44,7 +44,7 @@
 						</div>
 					</div>
 			</div>
-			<div class="col mt-4 text-right">
+			<div class="col mt-4 text-right" style="margin-bottom:20px;">
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#P_Add">
 				Add
 				</button>
@@ -77,8 +77,10 @@
 								<td>{{ item.unit_price }}</td>
 								<td>{{ item.qty_purchased }}</td>
 							<td>{{ item.qty_sold }}</td>
-							{% if item.qty_purchased > 0 %}
+							{% if item.qty_purchased > 25 %}
 							<td>Available</td>
+							{% elif item.qty_purchased > 0 and item.qty_purchased <= 25 %}
+							<td>re_order</td>
 							{% else %}
 							<td>Not Available</td>
 							{% endif %}
