@@ -165,6 +165,7 @@
                         <td>{{ vendor.vendor_address }}</td>
                         <td>{{ vendor.vendor_mobile }}</td>
                         <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewVe-{{ vendor.id}}">View</a></td>
+                        <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-update' vendor.id %}">Edit</a></td>
                         <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-vendor-delete' vendor.id %}">Delete</a></td>
                       </tr>
                     {% endfor %}

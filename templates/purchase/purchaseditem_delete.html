@@ -17,7 +17,7 @@
                     <form method="POST">
                         {% csrf_token %}
                         {% comment %} {{form|crispy}} {% endcomment %}
-                        <a class="btn btn-primary btn-primary " href="#">cancel</a>
+                        <a class="btn btn-primary btn-primary " href="{{ request.META.HTTP_REFERER }}">cancel</a>
                         <input type="submit" value="confirm" class="btn btn-danger" />
                     </form>
                 </div>

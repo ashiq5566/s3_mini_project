@@ -117,6 +117,20 @@ def customer_view(request, pk):
     }
     return render(request, 'dashboard/customer_view.html',context)
 
+
+@login_required
+def customer_update(request, pk):
+    customers = Customer.objects.get(id=pk)
+    form = CustomerForm(request.POST or None, instance = customers)
+    if form.is_valid():
+            form.save()
+            return redirect("dashboard-customer")
+    context = {
+        'form' : form
+    }
+    return render(request, 'dashboard/customer_update.html',context)
+
+
 @login_required
 def customer_delete(request, pk):
     customers = Customer.objects.get(id=pk)
@@ -165,6 +179,18 @@ def vendor_view(request, pk):
         'vendors' : vendors,
     }
     return render(request, 'dashboard/vendor_veiw.html',context)
+
+@login_required
+def vendor_update(request, pk):
+    vendors = Vendor.objects.get(id=pk)
+    form = VendorForm(request.POST or None, instance = vendors)
+    if form.is_valid():
+            form.save()
+            return redirect("dashboard-vendor")
+    context = {
+        'form' : form
+    }
+    return render(request, 'dashboard/vendor_update.html',context)
 
 @login_required
 def vendor_delete(request, pk):
@@ -927,7 +953,7 @@ def sales_return_po(request,so_number):
     return render(request, 'salesReturn/sales_return_po.html',context) 
 
 @login_required
-def error_404(request):    
+def error_404(request):
     return render(request, 'dashboard/error.html')
 
 @login_required
