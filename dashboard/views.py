@@ -515,6 +515,7 @@ def purchase_return_po(request,po_number):
     current_po = po_number
     pn_id = PurchaseOrder.objects.get(po_number=po_number).id 
     purchased_items = PurchasedItems.objects.filter(po_number_id = pn_id)
+    
     if request.method == "POST":
         item_name = request.POST.get('i_name')
         re_qty = request.POST.get('rq')
@@ -532,7 +533,6 @@ def purchase_return_po(request,po_number):
             record2.save()
         else:
             return redirect('error_404')
-        
         
         return redirect('purchase_return_po', current_po)
         

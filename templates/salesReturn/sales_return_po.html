@@ -14,7 +14,7 @@
                     <tr>
                         <td><label>ItemName:</label></td>
                         <td>
-                            <select name="i_name" >
+                            <select name="i_name" style="width:261px;height:35px;">
                                 {% for sold_item in sold_items %}
                                 <option>{{sold_item.item_name}}</option>
                                 {% endfor %}
@@ -48,6 +48,26 @@
 						<td>{{ sales_return.item_name }}</td>
 						<td>{{ sales_return.return_qty }}</td>
                         <td>{{ sales_return.amount }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-md-5">
+            <table cellpadding="0" cellspacing="0" border="0">
+				<thead class="tbl-header">
+				<tr>
+					<th scope="col">ItemName</th>
+					<th scope="col">Sold_Quantity</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for sold_item in sold_items %}
+					<tr>
+						<td>{{ sold_item.item_name }}</td>
+						<td>{{ sold_item.quantity }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
