@@ -77,7 +77,7 @@ class ItemForm(forms.ModelForm):
                     "label": "Name",
                 }
             ),
-            "unit_price": forms.TextInput(
+            "unit_price": forms.NumberInput(
                 attrs={
                     "required": True,
                     "placeholder": "Entre price1",

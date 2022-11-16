@@ -1,5 +1,5 @@
 {% extends 'partial/base.html' %}
-{% block title %} ERROR PAGE {% endblock %}
+{% block title %} PAYMENT ERROR PAGE {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -35,7 +35,7 @@
                 {% comment %} <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> {% endcomment %}
             </div>
             <div class="modal-body">
-                <p>Sorry, the item could not be added or updated <br>because duplicate values were found!</p>
+                <p>Sorry, the payment could not be updated  </p>
             </div>
             <div class="modal-footer">
                 <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary btn-lg">OK</a>

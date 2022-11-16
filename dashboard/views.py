@@ -239,7 +239,8 @@ def stock_update(request, pk):
 @login_required
 def purchase(request):
     vendors = Vendor.objects.all()
-    purchase_orders = PurchaseOrder.objects.all()
+    purchase_orders_new = PurchaseOrder.objects.all()
+    purchase_orders = PurchaseOrder.objects.all().exclude(gross_amount=None)
     po_n = 101 if PurchaseOrder.objects.count() == 0 else PurchaseOrder.objects.aggregate(max=Max('po_no'))["max"] + 1
     if request.method == 'POST':
         # g_amount = request.POST.get('gross_amount')
@@ -253,7 +254,7 @@ def purchase(request):
             PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_name=ven1).save()
             po = (f'{"PO"}{po_n}')
             # ven2 = purchase_orders.get(po_number=po)
-            ven2 = purchase_orders.values('po_number').filter(po_number=po)[0]['po_number']
+            ven2 = purchase_orders_new.values('po_number').filter(po_number=po)[0]['po_number']
             return redirect("purchase_add" ,ven2)
     else:
         form = PurchaseOrderForm
@@ -275,18 +276,19 @@ def purchase_view(request, pk):
     current_vendor_id = Vendor.objects.get(vendor_name=current_vendor).vendor_id
     po_date = PurchaseOrder.objects.get(id=current_po_number).date
     discount = PurchaseOrder.objects.get(id=current_po_number).discount
-    net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
-    
+    # net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
+       
     total_amt = 0
     _id = PurchaseOrder.objects.get(id=pk).id
     for each in PurchasedItems.objects.filter(po_number__id=_id):
         total_amt += each.total_amt
+    net = int(total_amt) - int(discount)
     context = {
         'purchase_orders' : purchase_orders,
         'purchase_order_views' : purchase_order_views,
         'total_amt' : total_amt,
         'discount' : discount,
-        'net_amt' : net_amt,
+        'net' : net,
         'current_purchase_orderid' : current_purchase_orderid,
         'current_po' : current_po,
         'current_vendor' : current_vendor,
@@ -526,6 +528,7 @@ def purchase_return_po(request,po_number):
             record.save()
             record2 = PurchaseOrder.objects.get(po_number=current_po)
             record2.net_amount = int(record2.net_amount) - int(amt)
+            record2.net_pending = int(record2.net_pending) - int(amt)
             record2.save()
         else:
             return redirect('error_404')
@@ -552,7 +555,7 @@ def payment_vendor(request, vendor_id):
     vid = Vendor.objects.get(vendor_id=vendor_id).id
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
-    purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid)
+    purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid).exclude(gross_amount=None)
     # po_id = PurchaseOrder.objects.get()
     
     context = {
@@ -578,12 +581,16 @@ def payment_purchase_order(request,vendor_id, pk):
     pending = PurchaseOrder.objects.get(id=pk).net_amount
     if request.method == "POST":
         paid_amt = request.POST.get('paid')
-        Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
-        for each in Payment.objects.filter(po_number__id=pk):
-                pending -= each.paid
-        record = PurchaseOrder.objects.get(po_number=current_po)
-        record.net_pending = pending
-        record.save()
+        
+        if int(paid_amt) <= int(pending_amt):
+            Payment(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),po_number=purchase_orders1.get(po_number=current_po),paid=paid_amt).save()
+            for each in Payment.objects.filter(po_number__id=pk):
+                    pending -= each.paid
+            record = PurchaseOrder.objects.get(po_number=current_po)
+            record.net_pending = pending
+            record.save()
+        else:
+            return redirect('error_payment')
         return redirect('payment_purchase_order',current_ve,current_id)
     payments = Payment.objects.filter(po_number_id=current_id)
     if pending_amt == 0:
@@ -604,7 +611,8 @@ def payment_purchase_order(request,vendor_id, pk):
 @login_required
 def sales(request):
     customers = Customer.objects.all()
-    sales_orders = SalesOrder.objects.all()
+    sales_orders_new = SalesOrder.objects.all()
+    sales_orders = SalesOrder.objects.all().exclude(gross_amount=None)
     so_n = 101 if SalesOrder.objects.count() == 0 else SalesOrder.objects.aggregate(max=Max('so_no'))["max"] + 1
     if request.method == 'POST':  
         form = SalesOrderForm(request.POST)
@@ -613,7 +621,7 @@ def sales(request):
         if form.is_valid():
             SalesOrder(so_no=so_n,so_number=(f'{"SO"}{so_n}'),customer_name=cus1).save()
             po = (f'{"SO"}{so_n}')
-            cus2 = sales_orders.values('so_number').filter(so_number=po)[0]['so_number']
+            cus2 = sales_orders_new.values('so_number').filter(so_number=po)[0]['so_number']
             return redirect("sales_add" ,cus2)
     else:
         form = SalesOrderForm
@@ -661,9 +669,9 @@ def sales_add(request, so_number):
         record.qty_purchased = int(record.qty_purchased) - int(record.qty_sold)
         item_id = Item.objects.get(item_id=current_item_id).id
         if form.is_valid():
-            if item_id in p_lists:     
+            if item_id in p_lists or int(qty) > int(record.qty_purchased):     
                 return redirect('error_404')
-            else: 
+            else:
                 SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
                 record.save()
                 return redirect('sales_add', so_number)
@@ -849,7 +857,7 @@ def payment_customer(request, customer_id):
     cid = Customer.objects.get(customer_id=customer_id).id
     current_customer_id = Customer.objects.get(id=cid).customer_id
     current_customer_name = Customer.objects.get(id=cid).customer_name
-    sales_orders = SalesOrder.objects.filter(customer_name = cid)
+    sales_orders = SalesOrder.objects.filter(customer_name = cid).exclude(gross_amount=None)
     # po_id = PurchaseOrder.objects.get()
     
     context = {
@@ -875,12 +883,16 @@ def payment_sales_order(request,customer_id, pk):
     pending = SalesOrder.objects.get(id=pk).net_amount
     if request.method == "POST":
         paid_amt = request.POST.get('paid')
-        PaymentSales(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),so_number=sales_orders1.get(so_number=current_so),paid=paid_amt).save()
-        for each in PaymentSales.objects.filter(so_number__id=pk):
-                pending -= each.paid
-        record = SalesOrder.objects.get(so_number=current_so)
-        record.net_pending = pending
-        record.save()
+        
+        if int(paid_amt) <= int(pending_amt):
+            PaymentSales(payment_no=payment_no,payment_id=(f'{"TNR"}{payment_no}'),so_number=sales_orders1.get(so_number=current_so),paid=paid_amt).save()
+            for each in PaymentSales.objects.filter(so_number__id=pk):
+                    pending -= each.paid
+            record = SalesOrder.objects.get(so_number=current_so)
+            record.net_pending = pending
+            record.save()
+        else:
+            return redirect('error_payment')
         return redirect('payment_sales_order',current_cu,current_id)
     sales_payments = PaymentSales.objects.filter(so_number_id=current_id)
     if pending_amt == 0:
@@ -932,6 +944,7 @@ def sales_return_po(request,so_number):
             record.save()
             record2 = SalesOrder.objects.get(so_number=current_so)
             record2.net_amount = int(record2.net_amount) - int(amt)
+            record2.net_pending = int(record2.net_pending) - int(amt)
             record2.save()
         else:
             return redirect('error_404')
@@ -955,6 +968,10 @@ def sales_return_po(request,so_number):
 @login_required
 def error_404(request):
     return render(request, 'dashboard/error.html')
+
+@login_required
+def error_payment(request):
+    return render(request, 'dashboard/error_payment.html')
 
 @login_required
 def re_order(request):

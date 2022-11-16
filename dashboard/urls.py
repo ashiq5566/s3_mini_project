@@ -40,6 +40,7 @@ urlpatterns = [
     path('sales/return',views.sales_return,name='sales_return'),
     path('sales/return/<so_number>',views.sales_return_po,name='sales_return_po'),
     path('error_404',views.error_404,name='error_404'),
+    path('error_payment',views.error_payment,name='error_payment'),
     path('re_order',views.re_order,name='re_order'),
     path('re_order/list',views.re_order_list,name='re_order_list'),
 ]
