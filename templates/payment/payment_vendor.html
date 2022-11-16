@@ -4,6 +4,16 @@
 
 {% block content %}
 {% include 'partial/topnav_staff.html'%}
+<style>
+	.edit{
+		  background: white;
+		  padding: 6px 12px;
+		  color: black;
+		  border: 1px solid;
+		  border-radius: 8px;
+		  text-decoration: none;
+		}
+  </style>
 <div style="margin-left:290px;margin-right:20px">
     <div class="row my-4">
         {% comment %} <div class="col-md-4">
@@ -30,7 +40,7 @@
 						{% else %}
 							<td></td>
 						{% endif %}
-						<td><a href="{% url 'payment_purchase_order' purchase_order.vendor_name purchase_order.id %}">View</a></td>
+						<td><a class="edit" href="{% url 'payment_purchase_order' purchase_order.vendor_name purchase_order.id %}">View</a></td>
 					</tr>
 					{% endfor %}
 				</tbody>
