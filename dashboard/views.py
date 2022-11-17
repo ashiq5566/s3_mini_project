@@ -21,6 +21,8 @@ from reportlab.lib.pagesizes import letter
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
 
 
 
@@ -29,6 +31,10 @@ from xhtml2pdf import pisa
 @login_required
 def index(request):
     items = Item.objects.all()
+    # sales_report=SalesOrder.objects.annotate(month=TruncMonth('date')).values('month').annotate(c=Count('id')).values('month', 'c')                    
+    # print(sales_report)
+    # report = SalesOrder.objects.filter(recordDate__gte='2019-03-01', recordDate__lte='2019-03-09')
+
     
     context = {
         'items' : items,
@@ -393,20 +399,6 @@ def purchase_add_confirm(request ,po_number):
         
     }
     return render(request, 'purchase/purchase_confirm.html',context)
-
-# @login_required
-# def purchaseditem_update(request, id, po_number):
-#     purchased_items = PurchasedItems.objects.get(pk=id)
-#     form = PurchasedItemForm(request.POST or None, instance = purchased_items)
-#     if form.is_valid():
-#         form.save()
-#         return redirect('purchase_add',po_number)
-    
-#     context = {
-#         'purchased_items' : purchased_items,
-#         'form' : form,
-#     }
-#     return render(request, 'purchase/purchaseditem_update.html',context)
 
 @login_required
 def purchaseditem_delete(request, id, po_number):

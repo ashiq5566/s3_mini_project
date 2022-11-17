@@ -128,6 +128,7 @@
                     <th scope="col">Contact</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
               </table>
@@ -141,9 +142,25 @@
                     <td>{{ customer.customer_name }}</td>
                     <td>{{ customer.customer_address }}</td>
                     <td>{{ customer.customer_mobile }}</td>
-                    <td scope="row"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewC-{{ customer.id}}">View</a></td>
-					<td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-customer-update' customer.id %}">Edit</a></td>
-                    <td scope="row"><a class="btn btn-danger btn-sm" href="{% url 'dashboard-customer-delete' customer.id %}">Delete</a></td>
+                    <td scope="row">
+                      <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewC-{{ customer.id}}">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+
+                        View
+                      </a>
+                    </td>
+					          <td scope="row">
+                      <a class="btn btn-danger btn-sm" href="{% url 'dashboard-customer-update' customer.id %}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        Edit
+                      </a>
+                    </td>
+                    <td scope="row">
+                      <a class="btn btn-danger btn-sm" href="{% url 'dashboard-customer-delete' customer.id %}">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete
+                      </a>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
