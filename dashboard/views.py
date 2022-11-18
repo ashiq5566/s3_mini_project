@@ -23,6 +23,7 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
+from datetime import datetime
 
 
 
@@ -33,11 +34,29 @@ def index(request):
     items = Item.objects.all()
     # sales_report=SalesOrder.objects.annotate(month=TruncMonth('date')).values('month').annotate(c=Count('id')).values('month', 'c')                    
     # print(sales_report)
-    # report = SalesOrder.objects.filter(recordDate__gte='2019-03-01', recordDate__lte='2019-03-09')
-
+    reports = []
+    reports_puchases = []
+    if request.method == 'POST':
+        st = request.POST.get('start')
+        ed = request.POST.get('end')
+        start_date = datetime.strptime(st, '%Y-%m-%d')
+        end_date = datetime.strptime(ed, '%Y-%m-%d')
+        print(start_date)
+        print(end_date)
+        reports = SalesOrder.objects.filter(date__gte= start_date,date__lte= end_date)
+        reports_puchases = PurchaseOrder.objects.filter(date__gte= start_date,date__lte= end_date)
+        # order_lists = reports.values_list('so_number', flat=True)
+        # print(order_lists)
+    else:   
+        pass
     
+    # for each in order_lists:
+    #     pass
+        
     context = {
         'items' : items,
+        'reports':reports,
+        'reports_puchases': reports_puchases  
     }
     return render(request, 'dashboard/index.html',context)
 
@@ -404,7 +423,7 @@ def purchase_add_confirm(request ,po_number):
 def purchaseditem_delete(request, id, po_number):
     items = Item.objects.all()
     purchased_items = PurchasedItems.objects.get(pk=id)
-    record = PurchasedItems.objects.get(pk=id).item_id
+    record = PurchasedItemspurchase_add.objects.get(pk=id).item_id
     qty = PurchasedItems.objects.get(pk=id).quantity
     stock = Item.objects.get(item_id=record)
     print("gello", qty)
@@ -656,14 +675,14 @@ def sales_add(request, so_number):
         uprice = Item.objects.get(item_id=current_item_id).unit_price
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
-        print("sdsd", i_name)
-        record.qty_sold = record.qty_sold + qty
-        record.qty_purchased = int(record.qty_purchased) - int(record.qty_sold)
+        print("sdsd", qty   )
         item_id = Item.objects.get(item_id=current_item_id).id
         if form.is_valid():
-            if item_id in p_lists or int(qty) > int(record.qty_purchased):     
+            if (item_id in p_lists) or (int(qty) > int(record.qty_purchased)):     
                 return redirect('error_404')
             else:
+                record.qty_sold = record.qty_sold + qty
+                record.qty_purchased = int(record.qty_purchased) - int(qty)
                 SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
                 record.save()
                 return redirect('sales_add', so_number)
@@ -762,12 +781,14 @@ def sales_view(request, pk):
     _id = SalesOrder.objects.get(id=pk).id
     for each in SoldItems.objects.filter(so_number__id=_id):
         total_amt += each.total_amt
+    net = int(total_amt) - int(discount)
     context = {
         'sales_orders' : sales_orders,
         'sales_order_views' : sales_order_views,
         'total_amt' : total_amt,
         'discount' : discount,
         'net_amt' : net_amt,
+        'net' : net,
         'current_sales_orderid' : current_sales_orderid,
         'current_so' : current_so,
         'current_customer' : current_customer,

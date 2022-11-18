@@ -26,11 +26,12 @@ class CustomerForm(forms.ModelForm):
                     "label": "Address",
                 }
             ),
-            "customer_mobile": forms.TextInput(
+            "customer_mobile": forms.NumberInput(
                 attrs={
                     "required": True,
                     "placeholder": "Enter Mobile",
                     "label": "Mobile",
+                     "maxlength": 10
                 }
             ),
         }
@@ -55,11 +56,12 @@ class VendorForm(forms.ModelForm):
                     "label": "Address",
                 }
             ),
-            "vendor_mobile": forms.TextInput(
+            "vendor_mobile": forms.NumberInput(
                 attrs={
                     "required": True,
                     "placeholder": "Enter Mobile",
                     "label": "Mobile",
+                    "maxlength": 10
                 }
             ),
         }

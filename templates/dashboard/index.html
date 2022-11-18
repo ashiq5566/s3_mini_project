@@ -69,12 +69,66 @@
             </div>
         </div>
     </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display:inline-flex;margin-bottom:20px">
+            <input style="margin-right:10px;" type="date" name="start" class="form-control"> 
+            <input type="date" name="end" class="form-control">
+        </div>
+        <input type="submit" class="btn btn-info" value="Filter" />
+        
+    </form>
+    <div class="row my-5">
+        <div class="col-md-6">
+            <div class="input-group date">
+                
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <thead class="tbl-header">
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">SO_ID</th>
+                            <th scope="col">Gross_Amount</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>{{ report.date }}</td>
+                            <td>{{ report.so_number }}</td>
+                            <td>{{ report.gross_amount }}</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <table cellpadding="0" cellspacing="0" border="0">
+                <thead class="tbl-header">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">SO_ID</th>
+                        <th scope="col">Gross_Amount</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports_puchases %}
+                    <tr>
+                        <td>{{ report.date }}</td>
+                        <td>{{ report.po_number }}</td>
+                        <td>{{ report.gross_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <!-- graphs -->
 <!-- --------------------filter using dates------------------- -->
-
-
-
 
 
 {% endblock %}
