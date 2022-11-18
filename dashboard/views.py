@@ -532,10 +532,11 @@ def purchase_return_po(request,po_number):
         re_qty = request.POST.get('rq')
         inm = Item.objects.get(name=item_name).id
         unit_price = PurchasedItems.objects.get(po_number_id = pn_id , item_name=inm).unit_price
+        puchased_qty = PurchasedItems.objects.get(po_number_id = pn_id , item_name=inm).quantity
         amt = int(re_qty) * int(unit_price)
-        PurchaseReturn(po_number=PurchaseOrder.objects.get(po_number=current_po),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
         record = Item.objects.get(id=inm)
-        if int(re_qty) <= int(record.qty_purchased):
+        if int(re_qty) <= int(record.qty_purchased) and int(re_qty) <= int(puchased_qty):
+            PurchaseReturn(po_number=PurchaseOrder.objects.get(po_number=current_po),item_name = items.get(name=item_name),return_qty = re_qty,amount=amt).save()
             record.qty_purchased = int(record.qty_purchased) - int(re_qty)
             record.save()
             record2 = PurchaseOrder.objects.get(po_number=current_po)
