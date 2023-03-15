@@ -32,8 +32,6 @@ from datetime import datetime
 @login_required
 def index(request):
     items = Item.objects.all()
-    # sales_report=SalesOrder.objects.annotate(month=TruncMonth('date')).values('month').annotate(c=Count('id')).values('month', 'c')                    
-    # print(sales_report)
     reports = []
     reports_puchases = []
     if request.method == 'POST':
@@ -45,18 +43,23 @@ def index(request):
         print(end_date)
         reports = SalesOrder.objects.filter(date__gte= start_date,date__lte= end_date)
         reports_puchases = PurchaseOrder.objects.filter(date__gte= start_date,date__lte= end_date)
-        # order_lists = reports.values_list('so_number', flat=True)
-        # print(order_lists)
+ 
+    tot = 0
+    for each in reports:
+        tot += each.gross_amount
+    tot1 = 0
+    for each in reports_puchases:
+        tot1 += each.gross_amount
     else:   
         pass
     
-    # for each in order_lists:
-    #     pass
-        
+
     context = {
         'items' : items,
         'reports':reports,
-        'reports_puchases': reports_puchases  
+        'reports_puchases': reports_puchases,
+        'tot' : tot,
+        'tot1' : tot1,
     }
     return render(request, 'dashboard/index.html',context)
 
@@ -110,14 +113,12 @@ def customer(request):
     vendor_count = vendors.count()
     c_id = 101 if Customer.objects.count() == 0 else Customer.objects.aggregate(max=Max('customer_no'))["max"] + 1
     if request.method == 'POST':
-        # cu_id = request.POST.get('cu_id')
         name = request.POST.get('customer_name')
         address = request.POST.get('customer_address')
         mob = request.POST.get('customer_mobile')
         form = CustomerForm(request.POST)
         if form.is_valid():
             Customer(customer_no=c_id,customer_id=(f'{"C"}{c_id}'),customer_name=name,customer_address=address,customer_mobile=mob).save()
-            # redirect('dashboard/customer')
     else:
         form = CustomerForm()
     context = {
@@ -129,10 +130,6 @@ def customer(request):
         'form' : form,
     }
     return render(request, 'dashboard/customers.html', context)
-
-# @login_required
-# def customer_add(request):
-#     return render(request, 'dashboard/customer_add.html')
     
 @login_required
 def customer_view(request, pk):
@@ -176,14 +173,12 @@ def vendor(request):
     customer_count = Customer.objects.all().count()
     v_id = 101 if Vendor.objects.count() == 0 else Vendor.objects.aggregate(max=Max('vendor_no'))["max"] + 1
     if request.method == 'POST':
-        # ve_id = request.POST.get('ve_id')
         name = request.POST.get('vendor_name')
         address = request.POST.get('vendor_address')
         mob = request.POST.get('vendor_mobile')
         form = VendorForm(request.POST)
         if form.is_valid():
             Vendor(vendor_no=v_id,vendor_id=(f'{"V"}{v_id}'),vendor_name=name,vendor_address=address,vendor_mobile=mob).save()
-            # redirect('dashboard/vendor')
 
 
     else:
@@ -233,13 +228,11 @@ def stock(request):
     items = Item.objects.all()
     p_id = 101 if Item.objects.count() == 0 else Item.objects.aggregate(max=Max('item_no'))["max"] + 1
     if request.method == 'POST':
-        #i_id = request.POST.get('i_id')
         price = request.POST.get('unit_price')
         name = request.POST.get('name')
         form = ItemForm(request.POST)
         if form.is_valid():
             Item(item_no=p_id,item_id=(f'{"P"}{p_id}'),name=name,unit_price=price).save()
-            # form.save()
      
     else:
         form = ItemForm
@@ -267,18 +260,13 @@ def purchase(request):
     purchase_orders_new = PurchaseOrder.objects.all()
     purchase_orders = PurchaseOrder.objects.all().exclude(gross_amount=None)
     po_n = 101 if PurchaseOrder.objects.count() == 0 else PurchaseOrder.objects.aggregate(max=Max('po_no'))["max"] + 1
-    if request.method == 'POST':
-        # g_amount = request.POST.get('gross_amount')
-        # dis = request.POST.get('discount')    
+    if request.method == 'POST':  
         form = PurchaseOrderForm(request.POST)
         ven = request.POST.get('vendor_name')
         ven1 = vendors.get(id=ven)
-        # ven1 = purchase_orders.get(id=ven)
         if form.is_valid():
-            # form.save()
             PurchaseOrder(po_no=po_n,po_number=(f'{"PO"}{po_n}'),vendor_name=ven1).save()
             po = (f'{"PO"}{po_n}')
-            # ven2 = purchase_orders.get(po_number=po)
             ven2 = purchase_orders_new.values('po_number').filter(po_number=po)[0]['po_number']
             return redirect("purchase_add" ,ven2)
     else:
@@ -301,7 +289,6 @@ def purchase_view(request, pk):
     current_vendor_id = Vendor.objects.get(vendor_name=current_vendor).vendor_id
     po_date = PurchaseOrder.objects.get(id=current_po_number).date
     discount = PurchaseOrder.objects.get(id=current_po_number).discount
-    # net_amt = PurchaseOrder.objects.get(id=current_po_number).net_amount
        
     total_amt = 0
     _id = PurchaseOrder.objects.get(id=pk).id
@@ -383,13 +370,11 @@ def purchase_add(request, po_number):
         'current_vendor_id1':current_vendor_id1,
         'purchase_order_individals':purchase_order_individals,
         'total_amt':  total_amt,
-        # 'each_total_amount':each_total_amount
     } 
     return render(request, 'purchase/purchase_add.html',context)
 
 @login_required
 def purchase_add_confirm(request ,po_number):
-    # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
     purchase_orders = PurchaseOrder.objects.all()
     current_po_number = purchase_orders.values('po_number').filter(po_number=po_number)[0]['po_number']
     current_po_number_view = purchase_orders.values('id').filter(po_number=po_number)[0]['id']
@@ -423,7 +408,7 @@ def purchase_add_confirm(request ,po_number):
 def purchaseditem_delete(request, id, po_number):
     items = Item.objects.all()
     purchased_items = PurchasedItems.objects.get(pk=id)
-    record = PurchasedItemspurchase_add.objects.get(pk=id).item_id
+    record = PurchasedItems.objects.get(pk=id).item_id
     qty = PurchasedItems.objects.get(pk=id).quantity
     stock = Item.objects.get(item_id=record)
     print("gello", qty)
@@ -496,8 +481,6 @@ def payment(request):
 
     else:
         form = SelectVendorForm()
-    # if request.method == 'POST':
-    #     v = request.POST.get('v_id')
     context = {
         "vendors" : vendors,
         "form" : form
@@ -568,7 +551,6 @@ def payment_vendor(request, vendor_id):
     current_vendor_id = Vendor.objects.get(id=vid).vendor_id
     current_vendor_name = Vendor.objects.get(id=vid).vendor_name
     purchase_orders = PurchaseOrder.objects.filter(vendor_name = vid).exclude(gross_amount=None)
-    # po_id = PurchaseOrder.objects.get()
     
     context = {
         "current_vendor_id" : current_vendor_id,
@@ -614,7 +596,6 @@ def payment_purchase_order(request,vendor_id, pk):
         "purchase_orders" : purchase_orders,
         "current_po" : current_po,
         "net_total" : net_total,
-        # "pending" : pending,
         "payments" : payments
     }
     return render(request, 'payment/payment_purchase_order.html',context)   
@@ -663,16 +644,13 @@ def sales_add(request, so_number):
     total_amt = 0
     _id = SalesOrder.objects.get(so_number=so_number).id
     for each in SoldItems.objects.filter(so_number__id=_id):
-        total_amt += each.total_amt
-    # print("TOTAL:", total_amt) 
-    # print("LOGGGG:", _id)  
+        total_amt += each.total_amt 
     
     if request.method == "POST":  
         form = SoldItemForm(request.POST)
         i_name=request.POST['item_name']
         current_item_id = items.values('item_id').filter(id=i_name)[0]['item_id']
         qty=int(request.POST['quantity'])
-        # uprice=int(request.POST['unit_price'])
         uprice = Item.objects.get(item_id=current_item_id).unit_price
         g_amount = request.POST.get('g_amount')
         record = Item.objects.get(id=i_name)    
@@ -687,8 +665,7 @@ def sales_add(request, so_number):
                 SoldItems(so_number=sales_orders.get(so_number=current_so_number),item_name=items.get(item_id=current_item_id),customer_id=customers.get(id=current_customer_id),quantity=qty,unit_price=uprice).save()
                 record.save()
                 return redirect('sales_add', so_number)
-            # form.save()
-            # return redirect('purchase_add', so_number)
+
             
         
     else:
@@ -705,15 +682,12 @@ def sales_add(request, so_number):
         'current_customer_id1':current_customer_id1,
         'sales_order_individals':sales_order_individals,
         'total_amt':  total_amt,
-        # 'item_id' : item_id,
         'p_lists' : p_lists
-        # 'each_total_amount':each_total_amount
     } 
     return render(request, 'sales/sales_add.html',context)
 
 @login_required
 def sales_add_confirm(request ,so_number):
-    # purchase_orders = PurchaseOrder.objects.get(pk=po_number) 
     sales_orders = SalesOrder.objects.all()
     current_so_number = sales_orders.values('so_number').filter(so_number=so_number)[0]['so_number']
     current_so_number_view = sales_orders.values('id').filter(so_number=so_number)[0]['id']
@@ -858,8 +832,6 @@ def sales_payment(request):
 
     else:
         form = SelectCustomerForm()
-    # if request.method == 'POST':
-    #     v = request.POST.get('v_id')
     context = {
         "customers" : customers,
         "form" : form
@@ -872,7 +844,6 @@ def payment_customer(request, customer_id):
     current_customer_id = Customer.objects.get(id=cid).customer_id
     current_customer_name = Customer.objects.get(id=cid).customer_name
     sales_orders = SalesOrder.objects.filter(customer_name = cid).exclude(gross_amount=None)
-    # po_id = PurchaseOrder.objects.get()
     
     context = {
         "current_customer_id" : current_customer_id,
@@ -918,7 +889,6 @@ def payment_sales_order(request,customer_id, pk):
         "sales_orders" : sales_orders,
         "current_so" : current_so,
         "net_total" : net_total,
-        # "pending" : pending,
         "sales_payments" : sales_payments
     }
     return render(request, 'payment_sales/payment_sales_order.html',context)   
@@ -1020,31 +990,10 @@ def re_order_list(request):
 
 @login_required
 def product_delete(request, pk):
-    # items = Product.objects.get(id=pk)
-    # if request.method == 'POST':
-    #     items.delete()
-    #     return redirect('dashboard-product')
+
     return render(request, 'dashboard/product_delete.html')
 
 @login_required
 def product_edit(request, pk):
-    # items = Product.objects.get(id=pk)
-    # if request.method == 'POST':
-    #     form = ProductForm(request.POST, instance=items)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('dashboard-product')
-    # else:
-    #     form = ProductForm(instance=items)
-    # context={
-    #     'form' : form,
-    # }
+
     return render(request, 'dashboard/product_edit.html')
-
-
-
-
-
-
-
-

@@ -100,6 +100,10 @@
                             
                         </tr>
                         {% endfor %}
+                        <tr>
+                            <th>Total</th>
+                            <td>{{tot}}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -109,9 +113,8 @@
                 <thead class="tbl-header">
                     <tr>
                         <th scope="col">Date</th>
-                        <th scope="col">SO_ID</th>
+                        <th scope="col">PO_ID</th>
                         <th scope="col">Gross_Amount</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
@@ -122,6 +125,10 @@
                         <td>{{ report.gross_amount }}</td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <th>Total</th>
+                        <td>{{tot1}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
